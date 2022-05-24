@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:p4_client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Label x:Name="Time" Content="Time" HorizontalAlignment="Center" Margin="0,105,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Connect_Click" FontSize="22"/>
-        <Button x:Name="send" Content="send" HorizontalAlignment="Center" Margin="0,367,0,0" VerticalAlignment="Top" FontSize="20" IsEnabled="False" Click="send_Click"/>
-        <TextBox x:Name="req" HorizontalAlignment="Center" Margin="0,325,0,0" TextWrapping="Wrap" Text="request" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+        Title="MainWindow" Height="700" Width="1100">
+    <Grid >
+        <Button x:Name="launch" Content="Rechercher une partie..." HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="18" Height="40" Width="230" Click="launch_Click" Margin="0,118,0,0"/>
+        <Label HorizontalContentAlignment="Center" x:Name="searching" Content="" HorizontalAlignment="Center" Margin="0,176,0,0" VerticalAlignment="Top" FontSize="16" Width="230"/>
+        <TextBox x:Name="username" HorizontalAlignment="Center" Margin="0,69,0,0" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center"/>
+        <Label x:Name="playerOne" Content="" HorizontalAlignment="Left" Margin="117,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+        <Label x:Name="playerTwo" Content="" HorizontalAlignment="Left" Margin="901,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
 
     </Grid>
 </Window>
