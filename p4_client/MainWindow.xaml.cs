@@ -136,19 +136,25 @@ namespace p4_client
 
         private async void btn_c0_Click(object sender, RoutedEventArgs e)
         {
-            ToggleEnableButtons();
+            //ToggleEnableButtons();
             int column = 0;
+            bool nextAvailable = false;
 
-            for (int i = 1; i <= 6; i++)
+            for (int row = 1; row <= 6; row++)
             {
-                var element = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == column);
-                element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
-                await Task.Delay(1000);
-                if (i < 6)
+                var element = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == column);
+                if (row != 6)
                 {
-                    element = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == column);
-                    element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Beige);
+                    var elementnext = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == column);
+                    nextAvailable = elementnext.Fill.ToString().Equals("#FFF5F5DC") ? true : false;
+
                 }
+
+                element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+
+                await Task.Delay(1000);
+                if (!nextAvailable || row == 6) break;
+                element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Beige);
             }
 
             
