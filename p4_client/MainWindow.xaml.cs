@@ -25,9 +25,8 @@ namespace p4_client
     public partial class MainWindow : Window
     {
         private Socket _ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        private string match_id = "";
-        private Player player1;
-        private Player player2;
+        private string player_uid;
+        Game game;
 
         public MainWindow()
         {
@@ -79,38 +78,59 @@ namespace p4_client
             Thread listening_thread = new Thread(Receive);
             listening_thread.Start();
 
-
-            string query = "search," + username.Text;
+            player_uid = Guid.NewGuid().ToString();
+            string query = "search," + username.Text + "," + player_uid;
             Send(query);
         }
         private void SelectActions(string res) {
             string[] actions = res.Split(',');
 
-            if (actions[0] == "waiting") {
+            if (actions[0] == "waiting") 
+            {
                 Dispatcher.Invoke(() => {
-                    searching.Content = "Recherche d'une partie...";
+                    info.Content = "Recherche d'une partie...";
                 });
-            } else if (actions[0] == "matchFound") {
-                match_id = actions[1];
-                player1 = new Player(actions[2]);
-                player2 = new Player(actions[3]);
+            } 
+            else if (actions[0].Split(":")[0] == "matchFound") 
+            {
+                game = new Game(actions[0], new Player(actions[1]), new Player(actions[2]));
 
                 Dispatcher.Invoke(() => {
-                    searching.Content = "Partie trouvée";
+                    info.Content = "Partie trouvée";
                     username.Visibility = Visibility.Collapsed;
 
                     Thread.Sleep(2000);
 
-                    searching.Visibility = Visibility.Collapsed;
                     playerOne.Visibility = Visibility.Visible;
+                    playerOne.Content = (player_uid == game.player1.id) ? game.player1.name + "\n(vous)" : game.player1.name;
                     playerTwo.Visibility = Visibility.Visible;
-                    playerOne.Content = player1.name;
-                    playerTwo.Content = player2.name;    
+                    playerTwo.Content = (player_uid == game.player2.id) ? game.player2.name + "\n(vous)" : game.player2.name;
+
+                    grille.Visibility = Visibility.Visible;
+
+                    info.Content = game.player1.name + " commence la partie.";
                 });
 
-            } else {
+                if (player_uid == game.player1.id) {
+                    ToggleEnableButtons();
+                }
+            } 
+            else 
+            {
                 Console.WriteLine(res);
             }
+        }
+
+        private void ToggleEnableButtons() {
+            Dispatcher.Invoke(() => {
+                btn_c0.IsEnabled = !btn_c0.IsEnabled;
+                btn_c1.IsEnabled = !btn_c1.IsEnabled;
+                btn_c2.IsEnabled = !btn_c2.IsEnabled;
+                btn_c3.IsEnabled = !btn_c3.IsEnabled;
+                btn_c4.IsEnabled = !btn_c4.IsEnabled;
+                btn_c5.IsEnabled = !btn_c5.IsEnabled;
+                btn_c6.IsEnabled = !btn_c6.IsEnabled;
+            });
         }
     }
 }

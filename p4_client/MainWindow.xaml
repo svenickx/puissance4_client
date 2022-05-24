@@ -7,11 +7,40 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1100">
     <Grid >
-        <Button x:Name="launch" Content="Rechercher une partie..." HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="18" Height="40" Width="230" Click="launch_Click" Margin="0,118,0,0"/>
-        <Label HorizontalContentAlignment="Center" x:Name="searching" Content="" HorizontalAlignment="Center" Margin="0,176,0,0" VerticalAlignment="Top" FontSize="16" Width="230"/>
-        <TextBox x:Name="username" HorizontalAlignment="Center" Margin="0,69,0,0" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center"/>
+        <Button x:Name="launch" Content="Rechercher une partie..." HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="18" Height="40" Width="230" Click="launch_Click" Margin="0,78,0,0"/>
+        <Label HorizontalContentAlignment="Center" x:Name="info" Content="" HorizontalAlignment="Center" Margin="0,144,0,0" VerticalAlignment="Top" FontSize="16" Width="230"/>
+        <TextBox x:Name="username" HorizontalAlignment="Center" Margin="0,27,0,0" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center"/>
         <Label x:Name="playerOne" Content="" HorizontalAlignment="Left" Margin="117,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
         <Label x:Name="playerTwo" Content="" HorizontalAlignment="Left" Margin="901,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
+        <Grid x:Name="grille" Margin="150,212,150,91" ShowGridLines="True" UseLayoutRounding="False" Grid.Column="6" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" >
+
+                </RowDefinition>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <Button x:Name="btn_c0" Grid.Column="0" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+        </Grid>
 
     </Grid>
 </Window>
