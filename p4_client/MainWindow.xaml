@@ -12,7 +12,7 @@
         <TextBox x:Name="username" HorizontalAlignment="Center" Margin="0,27,0,0" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center"/>
         <Label x:Name="playerOne" Content="" HorizontalAlignment="Left" Margin="117,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
         <Label x:Name="playerTwo" Content="" HorizontalAlignment="Left" Margin="901,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
-        <Grid x:Name="grille" Margin="150,212,150,91" ShowGridLines="True" UseLayoutRounding="False" Grid.Column="6" Visibility="Collapsed">
+        <Grid x:Name="grille" Margin="150,212,150,91" ShowGridLines="True" UseLayoutRounding="False" Grid.Column="6" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -33,13 +33,19 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Button x:Name="btn_c0" Grid.Column="0" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
-            <Button x:Name="btn_c1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
-            <Button x:Name="btn_c2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
-            <Button x:Name="btn_c3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
-            <Button x:Name="btn_c4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
-            <Button x:Name="btn_c5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
-            <Button x:Name="btn_c6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False"/>
+            <Button x:Name="btn_c0" Grid.Column="0" Content="" HorizontalAlignment="Right" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Margin="0,0,9,0" Click="btn_c0_Click"/>
+            <Button x:Name="btn_c1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btn_c1_Click"/>
+            <Button x:Name="btn_c2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btn_c2_Click"/>
+            <Button x:Name="btn_c3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btn_c3_Click"/>
+            <Button x:Name="btn_c4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btn_c4_Click"/>
+            <Button x:Name="btn_c5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btn_c5_Click"/>
+            <Button x:Name="btn_c6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btn_c6_Click"/>
+            <Rectangle Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" Height="55" Fill="Beige" VerticalAlignment="Center" Width="114" RadiusX="50" RadiusY="50"/>
+            <Rectangle Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" Height="55" Fill="Beige" VerticalAlignment="Center" Width="114" RadiusX="50" RadiusY="50"/>
+            <Rectangle Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Height="55" Fill="Beige" VerticalAlignment="Center" Width="114" RadiusX="50" RadiusY="50"/>
+            <Rectangle Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Height="55" Fill="Beige" VerticalAlignment="Center" Width="114" RadiusX="50" RadiusY="50"/>
+            <Rectangle Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Height="55" Fill="Beige" VerticalAlignment="Center" Width="114" RadiusX="50" RadiusY="50"/>
+            <Rectangle Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="55" Fill="Beige" VerticalAlignment="Center" Width="114" RadiusX="50" RadiusY="50"/>
         </Grid>
 
     </Grid>

@@ -44,6 +44,7 @@ namespace p4_client
             while (true)
             {
                 byte[] receiveBuf = new byte[1024];
+                
                 int rec = _ClientSocket.Receive(receiveBuf);
                 byte[] data = new byte[rec];
                 Array.Copy(receiveBuf, data, rec);
@@ -131,6 +132,77 @@ namespace p4_client
                 btn_c5.IsEnabled = !btn_c5.IsEnabled;
                 btn_c6.IsEnabled = !btn_c6.IsEnabled;
             });
+        }
+
+        private async void btn_c0_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+            int column = 0;
+
+            for (int i = 1; i <= 6; i++)
+            {
+                var element = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == column);
+                element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
+                await Task.Delay(1000);
+                if (i < 6)
+                {
+                    element = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == column);
+                    element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Beige);
+                }
+            }
+
+            
+
+            string query = "move," + game.id + "," + player_uid + ",0";
+            Send(query);
+        }
+
+        private void btn_c1_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + ",1";
+            Send(query);
+        }
+
+        private void btn_c2_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + ",2";
+            Send(query);
+        }
+
+        private void btn_c3_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + ",3";
+            Send(query);
+        }
+
+        private void btn_c4_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + ",4";
+            Send(query);
+        }
+
+        private void btn_c5_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + ",5";
+            Send(query);
+        }
+
+        private void btn_c6_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + ",6";
+            Send(query);
         }
     }
 }
