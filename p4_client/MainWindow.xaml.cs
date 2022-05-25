@@ -32,7 +32,6 @@ namespace p4_client
         {
             InitializeComponent();
         }
-
         public void Send(string req)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(req);
@@ -119,6 +118,11 @@ namespace p4_client
             {
                 NewPieceReceived(Int32.Parse(actions[1]));
             }
+            else if (actions[0] == "endGame")
+            {
+                if (actions[1] == "victory") VictoryGame();
+                if (actions[1] == "draw") DrawGame();
+            }
             else 
             {
                 Console.WriteLine(res);
@@ -139,7 +143,7 @@ namespace p4_client
                 {
                     break;
                 }
-                await Task.Delay(1000);
+                //await Task.Delay(1000);
             }
         }
         private void NewPieceReceived(int column)
@@ -156,13 +160,21 @@ namespace p4_client
                 {
                     break;
                 }
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
             }
             if (CheckEndGame())
             {
-                Console.WriteLine("END GAME");
+                LoseGame();
             }
-            ToggleEnableButtons();
+            else
+            {
+                bool isGridStillPlayable = ToggleEnableButtons();
+                if (!isGridStillPlayable)
+                {
+                    Send("endGame," + game.id + "," + player_uid + ",draw");
+                    DrawGame();
+                }
+            }
         }
         private bool NewPiece(int row, int column, bool nextAvailable, bool isPlayer1)
         {
@@ -308,8 +320,33 @@ namespace p4_client
 
             return false;
         }
-        private void ToggleEnableButtons()
+        private void LoseGame()
         {
+            Send("endGame," + game.id + "," + player_uid + ",victory");
+
+            Dispatcher.Invoke(() => { 
+                info.Content = "Vous avez perdu!";
+                info.FontSize = 30;
+            });
+        }
+        private void VictoryGame()
+        {
+            Dispatcher.Invoke(() => {
+                info.Content = "Vous avez gagné!";
+                info.FontSize = 30;
+            });
+        }
+        private void DrawGame()
+        {
+            Dispatcher.Invoke(() => {
+                info.Content = "Egalité!";
+                info.FontSize = 30;
+            });
+        }
+        private bool ToggleEnableButtons()
+        {
+            bool isGridStillPlayable = false;
+
             for (int col = 0; col <= 6; col++)
             {
                 Dispatcher.Invoke(() => {
@@ -319,6 +356,7 @@ namespace p4_client
                     if (rectangleBellow!.Fill.ToString().Equals(Colors.Beige.ToString()))
                     {
                         btn!.IsEnabled = !btn.IsEnabled;
+                        isGridStillPlayable = true;
                     } 
                     else
                     {
@@ -326,8 +364,9 @@ namespace p4_client
                     }
                 });
             }
+            return isGridStillPlayable;
         }
-        private void btnNewPiece(object sender, RoutedEventArgs e)
+        private void BtnNewPiece(object sender, RoutedEventArgs e)
         {
             int col = int.Parse((sender as Button).Tag.ToString());
             NewPiecePlayed(col);

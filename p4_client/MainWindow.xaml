@@ -31,13 +31,13 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Button x:Name="btn_c0" Tag="0" Grid.Column="0" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
-            <Button x:Name="btn_c1" Tag="1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
-            <Button x:Name="btn_c2" Tag="2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
-            <Button x:Name="btn_c3" Tag="3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
-            <Button x:Name="btn_c4" Tag="4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
-            <Button x:Name="btn_c5" Tag="5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
-            <Button x:Name="btn_c6" Tag="6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="btnNewPiece"/>
+            <Button x:Name="btn_c0" Tag="0" Grid.Column="0" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c1" Tag="1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c2" Tag="2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c3" Tag="3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c4" Tag="4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c5" Tag="5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c6" Tag="6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
 
             <Rectangle Grid.Row="6" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="54" RadiusX="50" RadiusY="50"/>
             <Rectangle Grid.Row="5" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="55" RadiusX="50" RadiusY="50"/>
