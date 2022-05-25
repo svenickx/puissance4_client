@@ -27,29 +27,23 @@ namespace p4_client
         private Socket _ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private string player_uid;
         Game game;
+        Thread listening_thread;
 
         public MainWindow()
         {
             InitializeComponent();
         }
-        public void Send(string req)
+        private void launch_Click(object sender, RoutedEventArgs e)
         {
-            byte[] buffer = Encoding.ASCII.GetBytes(req);
-            _ClientSocket.Send(buffer);
-        }
-        public void Receive()
-        {
-            Console.WriteLine("Now listening...");
-            while (true)
-            {
-                byte[] receiveBuf = new byte[1024];
-                
-                int rec = _ClientSocket.Receive(receiveBuf);
-                byte[] data = new byte[rec];
-                Array.Copy(receiveBuf, data, rec);
-                Console.WriteLine("Received: " + Encoding.ASCII.GetString(data));
-                SelectActions(Encoding.ASCII.GetString(data));
-            }
+            launch.Visibility = Visibility.Collapsed;
+            LoopConnect();
+
+            listening_thread = new Thread(Receive);
+            listening_thread.Start();
+
+            player_uid = Guid.NewGuid().ToString();
+            string query = "search," + username.Text + "," + player_uid;
+            Send(query);
         }
         public void LoopConnect()
         {
@@ -70,16 +64,31 @@ namespace p4_client
             Console.Clear();
             Console.WriteLine("Connected");
         }
-        private void launch_Click(object sender, RoutedEventArgs e) {
-            launch.Visibility = Visibility.Collapsed;
-            LoopConnect();
-
-            Thread listening_thread = new Thread(Receive);
-            listening_thread.Start();
-
-            player_uid = Guid.NewGuid().ToString();
-            string query = "search," + username.Text + "," + player_uid;
-            Send(query);
+        public void Send(string req)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes(req);
+            _ClientSocket.Send(buffer);
+        }
+        public void Receive()
+        {
+            Console.WriteLine("Now listening...");
+            while (_ClientSocket.Connected)
+            {
+                try 
+                {
+                    byte[] receiveBuf = new byte[1024];
+                
+                    int rec = _ClientSocket.Receive(receiveBuf);
+                    byte[] data = new byte[rec];
+                    Array.Copy(receiveBuf, data, rec);
+                    Console.WriteLine("Received: " + Encoding.ASCII.GetString(data));
+                    SelectActions(Encoding.ASCII.GetString(data));
+                } 
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }   
         }
         private void SelectActions(string res) {
             string[] actions = res.Split(',');
@@ -383,9 +392,23 @@ namespace p4_client
         {
 
         }
-
+        protected override void OnClosed(EventArgs e)
+        {
+            ExitApp();
+        }
         private void LeaveGame_Click(object sender, RoutedEventArgs e)
         {
+            ExitApp();
+        }
+        private void ExitApp()
+        {
+            if (_ClientSocket.Connected)
+            {
+                Send("quit," + player_uid);
+                _ClientSocket.Shutdown(SocketShutdown.Both);
+                _ClientSocket.Close();
+                listening_thread.Interrupt();
+            }
             Application.Current.Shutdown();
         }
     }
