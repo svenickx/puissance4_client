@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace p4_client.Model {
-    internal class Player {
+    public class Player {
         public string id { get; set; }
         public string name { get; set; }
         public Player(string player_infos) {
