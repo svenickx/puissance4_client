@@ -71,7 +71,6 @@ namespace p4_client
             Console.Clear();
             Console.WriteLine("Connected");
         }
-
         private void launch_Click(object sender, RoutedEventArgs e) {
             launch.Visibility = Visibility.Collapsed;
             LoopConnect();
@@ -116,99 +115,222 @@ namespace p4_client
                     ToggleEnableButtons();
                 }
             } 
+            else if (actions[0] == "move")
+            {
+                NewPieceReceived(Int32.Parse(actions[1]));
+            }
             else 
             {
                 Console.WriteLine(res);
             }
         }
-
-        private void ToggleEnableButtons() {
-            Dispatcher.Invoke(() => {
-                btn_c0.IsEnabled = !btn_c0.IsEnabled;
-                btn_c1.IsEnabled = !btn_c1.IsEnabled;
-                btn_c2.IsEnabled = !btn_c2.IsEnabled;
-                btn_c3.IsEnabled = !btn_c3.IsEnabled;
-                btn_c4.IsEnabled = !btn_c4.IsEnabled;
-                btn_c5.IsEnabled = !btn_c5.IsEnabled;
-                btn_c6.IsEnabled = !btn_c6.IsEnabled;
-            });
-        }
-
-        private async void btn_c0_Click(object sender, RoutedEventArgs e)
+        private async void NewPiecePlayed(int column)
         {
-            //ToggleEnableButtons();
-            int column = 0;
             bool nextAvailable = false;
+            ToggleEnableButtons();
+
+            string query = "move," + game.id + "," + player_uid + "," + column.ToString();
+            Send(query);
 
             for (int row = 1; row <= 6; row++)
             {
-                var element = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == column);
-                if (row != 6)
+                nextAvailable = NewPiece(row, column, nextAvailable, (player_uid == game.player1.id));
+                if (!nextAvailable)
                 {
-                    var elementnext = (Rectangle)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == column);
-                    nextAvailable = elementnext.Fill.ToString().Equals("#FFF5F5DC") ? true : false;
-
+                    break;
                 }
-
-                element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Yellow);
-
                 await Task.Delay(1000);
-                if (!nextAvailable || row == 6) break;
-                element.Fill = new SolidColorBrush(System.Windows.Media.Colors.Beige);
+            }
+        }
+        private void NewPieceReceived(int column)
+        {
+            int row;
+            for (row = 1; row <= 6; row++)
+            {
+                bool nextAvailable = false;
+                Dispatcher.Invoke(() =>
+                {
+                    nextAvailable = NewPiece(row, column, nextAvailable, !(player_uid == game.player1.id));
+                });
+                if (!nextAvailable)
+                {
+                    break;
+                }
+                Thread.Sleep(1000);
+            }
+            if (CheckEndGame())
+            {
+                Console.WriteLine("END GAME");
+            }
+            ToggleEnableButtons();
+        }
+        private bool NewPiece(int row, int column, bool nextAvailable, bool isPlayer1)
+        {
+            var element = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == column);
+            var color = (isPlayer1) ? Colors.Yellow: Colors.Red;
+
+            if (row != 1)
+            {
+                var elementPrev = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row - 1 && Grid.GetColumn(e) == column);
+                elementPrev!.Fill = new SolidColorBrush(Colors.Beige);
             }
 
+            element!.Fill = new SolidColorBrush(color);
+
+            if (row != 6)
+            {
+                var elementNext = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == column);
+                nextAvailable = elementNext!.Fill.ToString().Equals(Colors.Beige.ToString());
+            }
+            else
+            {
+                var lastElement = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 6 && Grid.GetColumn(e) == column);
+                nextAvailable = lastElement!.Fill.ToString().Equals(Colors.Beige.ToString());
+            }
+            return nextAvailable;
+        }
+        private bool CheckEndGame()
+        {
+            return CheckRows() || CheckColumns() || CheckTopLeftDiagonals() || CheckBottomLeftDiagonals();
+        }
+        private bool CheckRows()
+        {
+            var color = (!(player_uid == game.player1.id)) ? Colors.Yellow : Colors.Red;
             
+            for (int row = 1; row < 7; row++)
+            {
+                for (int col = 0; col < 4; col++)
+                {
+                    bool isSameColor = false;
 
-            string query = "move," + game.id + "," + player_uid + ",0";
-            Send(query);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Dispatcher.Invoke(() => {
+                            var element = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col + i);
+                            isSameColor = element.Fill.ToString().Equals(color.ToString());
+                        });
+                        if (!isSameColor)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!isSameColor) continue;
+                    return true;
+                }
+            }
+            return false;
         }
-
-        private void btn_c1_Click(object sender, RoutedEventArgs e)
+        private bool CheckColumns()
         {
-            ToggleEnableButtons();
+            var color = (!(player_uid == game.player1.id)) ? Colors.Yellow : Colors.Red;
 
-            string query = "move," + game.id + "," + player_uid + ",1";
-            Send(query);
+            for (int col = 0; col < 7; col++)
+            {
+                for (int row = 1; row < 4; row++)
+                {
+                    bool isSameColor = false;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Dispatcher.Invoke(() => {
+                            var element = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + i && Grid.GetColumn(e) == col);
+                            isSameColor = element.Fill.ToString().Equals(color.ToString());
+                        });
+                        if (!isSameColor)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!isSameColor) continue;
+                    return true;
+                }
+            }
+
+            return false;
         }
-
-        private void btn_c2_Click(object sender, RoutedEventArgs e)
+        private bool CheckTopLeftDiagonals()
         {
-            ToggleEnableButtons();
+            var color = (!(player_uid == game.player1.id)) ? Colors.Yellow : Colors.Red;
 
-            string query = "move," + game.id + "," + player_uid + ",2";
-            Send(query);
+            for (int col = 0; col < 4; col++)
+            {
+                for (int row = 1; row < 4; row++)
+                {
+                    bool isSameColor = false;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Dispatcher.Invoke(() => {
+                            var element = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + i && Grid.GetColumn(e) == col + i);
+                            isSameColor = element.Fill.ToString().Equals(color.ToString());
+                        });
+                        if (!isSameColor)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!isSameColor) continue;
+                    return true;
+                }
+            }
+
+            return false;
         }
-
-        private void btn_c3_Click(object sender, RoutedEventArgs e)
+        private bool CheckBottomLeftDiagonals()
         {
-            ToggleEnableButtons();
+            var color = (!(player_uid == game.player1.id)) ? Colors.Yellow : Colors.Red;
 
-            string query = "move," + game.id + "," + player_uid + ",3";
-            Send(query);
+            for (int col = 0; col < 4; col++)
+            {
+                for (int row = 6; row > 3; row--)
+                {
+                    bool isSameColor = false;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Dispatcher.Invoke(() => {
+                            var element = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row - i && Grid.GetColumn(e) == col + i);
+                            isSameColor = element.Fill.ToString().Equals(color.ToString());
+                        });
+                        if (!isSameColor)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!isSameColor) continue;
+                    return true;
+                }
+            }
+
+            return false;
         }
-
-        private void btn_c4_Click(object sender, RoutedEventArgs e)
+        private void ToggleEnableButtons()
         {
-            ToggleEnableButtons();
+            for (int col = 0; col <= 6; col++)
+            {
+                Dispatcher.Invoke(() => {
+                    var btn = (Button?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 0 && Grid.GetColumn(e) == col);
+                    var rectangleBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 1 && Grid.GetColumn(e) == col);
 
-            string query = "move," + game.id + "," + player_uid + ",4";
-            Send(query);
+                    if (rectangleBellow!.Fill.ToString().Equals(Colors.Beige.ToString()))
+                    {
+                        btn!.IsEnabled = !btn.IsEnabled;
+                    } 
+                    else
+                    {
+                        btn!.IsEnabled = false;
+                    }
+                });
+            }
         }
-
-        private void btn_c5_Click(object sender, RoutedEventArgs e)
+        private void btnNewPiece(object sender, RoutedEventArgs e)
         {
-            ToggleEnableButtons();
-
-            string query = "move," + game.id + "," + player_uid + ",5";
-            Send(query);
-        }
-
-        private void btn_c6_Click(object sender, RoutedEventArgs e)
-        {
-            ToggleEnableButtons();
-
-            string query = "move," + game.id + "," + player_uid + ",6";
-            Send(query);
+            int col = int.Parse((sender as Button).Tag.ToString());
+            NewPiecePlayed(col);
         }
     }
 }
