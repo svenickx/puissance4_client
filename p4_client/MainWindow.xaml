@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:p4_client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1100">
+        Title="MainWindow" Height="900" Width="1022">
+
     <Grid >
         <Button x:Name="launch" Content="Rechercher une partie..." HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="18" Height="40" Width="230" Click="launch_Click" Margin="0,78,0,0"/>
-        <Label HorizontalContentAlignment="Center" x:Name="info" Content="" HorizontalAlignment="Center" Margin="0,144,0,0" VerticalAlignment="Top" FontSize="16" Width="230"/>
+        <Label HorizontalContentAlignment="Center" x:Name="info" Content="" HorizontalAlignment="Center" Margin="0,123,0,0" VerticalAlignment="Top" FontSize="16" Width="230"/>
         <TextBox x:Name="username" HorizontalAlignment="Center" Margin="0,27,0,0" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center"/>
         <Label x:Name="playerOne" Content="" HorizontalAlignment="Left" Margin="117,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
         <Label x:Name="playerTwo" Content="" HorizontalAlignment="Left" Margin="901,72,0,0" VerticalAlignment="Top" Visibility="Collapsed"/>
-        <Grid x:Name="grille" Margin="150,212,150,91" ShowGridLines="True" UseLayoutRounding="False" Grid.Column="6" Visibility="Visible">
+        <Grid x:Name="grille" Margin="230,182,230,182" UseLayoutRounding="False" Visibility="Visible" ShowGridLines="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -31,15 +32,57 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Button x:Name="btn_c0" Tag="0" Grid.Column="0" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
-            <Button x:Name="btn_c1" Tag="1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
-            <Button x:Name="btn_c2" Tag="2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
-            <Button x:Name="btn_c3" Tag="3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
-            <Button x:Name="btn_c4" Tag="4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
-            <Button x:Name="btn_c5" Tag="5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
-            <Button x:Name="btn_c6" Tag="6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="34" Width="95" IsEnabled="False" Click="BtnNewPiece"/>
+            <Button x:Name="btn_c0" Tag="0" Grid.Column="0" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="btn_c1" Tag="1" Grid.Column="1" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="btn_c2" Tag="2" Grid.Column="2" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="btn_c3" Tag="3" Grid.Column="3" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="btn_c4" Tag="4" Grid.Column="4" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="btn_c5" Tag="5" Grid.Column="5" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button x:Name="btn_c6" Tag="6" Grid.Column="6" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" Height="55" Width="55" IsEnabled="False" Click="BtnNewPiece">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="50"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
 
-            <Rectangle Grid.Row="6" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="54" RadiusX="50" RadiusY="50"/>
+            <Rectangle Grid.Row="6" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="55" RadiusX="50" RadiusY="50"/>
             <Rectangle Grid.Row="5" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="55" RadiusX="50" RadiusY="50"/>
             <Rectangle Grid.Row="4" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="55" RadiusX="50" RadiusY="50"/>
             <Rectangle Grid.Row="3" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="55" RadiusX="50" RadiusY="50"/>
@@ -89,6 +132,8 @@
             <Rectangle Grid.Column="6" Grid.Row="1" HorizontalAlignment="Center" Height="55" Fill="Beige" VerticalAlignment="Center" Width="55" RadiusX="50" RadiusY="50"/>
 
         </Grid>
+        <Button x:Name="NewGame" Visibility="Collapsed" Content="Relancer une partie" HorizontalAlignment="Left" Margin="230,780,0,0" VerticalAlignment="Top" FontSize="24" Width="225" Height="50" Background="LightBlue" Click="NewGame_Click"/>
+        <Button x:Name="LeaveGame" Visibility="Collapsed" Content="Quitter le jeu" HorizontalAlignment="Left" Margin="567,780,0,0" VerticalAlignment="Top" FontSize="24" Width="225" Height="50" Background="Red" Click="LeaveGame_Click"/>
 
     </Grid>
 </Window>

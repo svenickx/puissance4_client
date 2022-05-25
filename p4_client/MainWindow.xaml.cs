@@ -165,6 +165,8 @@ namespace p4_client
             if (CheckEndGame())
             {
                 LoseGame();
+                Dispatcher.Invoke(() => { 
+                });
             }
             else
             {
@@ -327,6 +329,8 @@ namespace p4_client
             Dispatcher.Invoke(() => { 
                 info.Content = "Vous avez perdu!";
                 info.FontSize = 30;
+                NewGame.Visibility = Visibility.Visible;
+                LeaveGame.Visibility = Visibility.Visible;
             });
         }
         private void VictoryGame()
@@ -334,6 +338,8 @@ namespace p4_client
             Dispatcher.Invoke(() => {
                 info.Content = "Vous avez gagné!";
                 info.FontSize = 30;
+                NewGame.Visibility = Visibility.Visible;
+                LeaveGame.Visibility = Visibility.Visible;
             });
         }
         private void DrawGame()
@@ -341,6 +347,8 @@ namespace p4_client
             Dispatcher.Invoke(() => {
                 info.Content = "Egalité!";
                 info.FontSize = 30;
+                NewGame.Visibility = Visibility.Visible;
+                LeaveGame.Visibility = Visibility.Visible;
             });
         }
         private bool ToggleEnableButtons()
@@ -370,6 +378,15 @@ namespace p4_client
         {
             int col = int.Parse((sender as Button).Tag.ToString());
             NewPiecePlayed(col);
+        }
+        private void NewGame_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LeaveGame_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }
