@@ -53,6 +53,8 @@ namespace p4_client
             Console.Clear();
             Console.WriteLine("Connected");
         }
+
+        /// <summary>Create a game with a remote player</summary>
         private void Launch_Click(object sender, RoutedEventArgs e)
         {
             this.grid = new CustomGrid(this);
@@ -66,6 +68,9 @@ namespace p4_client
             this.player_uid = Guid.NewGuid().ToString();
             Send("search," + username.Text + "," + this.player_uid);
         }
+        
+        /// <summary>Send data to the server</summary>
+        /// <param name="req">The data to send</param>
         public void Send(string req)
         {
             if (_ClientSocket.Connected)
@@ -74,6 +79,8 @@ namespace p4_client
                 _ClientSocket.Send(buffer);
             }
         }
+        
+        /// <summary>Listen the data that comes from the server</summary>
         public void Receive()
         {
             while (_ClientSocket.Connected)
@@ -93,6 +100,9 @@ namespace p4_client
                 }
             }   
         }
+
+        /// <summary>Performs an action according to the server's data</summary>
+        /// <param name="res">The data received from the server</param>
         private void SelectActions(string res) {
             string[] actions = res.Split(',');
 
@@ -124,11 +134,15 @@ namespace p4_client
                 Console.WriteLine(res);
             }
         }
+        
+        /// <summary>The current player clicked to place a new Piece on the grid</summary>
         private void BtnNewPiece(object sender, RoutedEventArgs e)
         {
             int col = int.Parse((sender as Button)!.Tag.ToString()!);
             Piece.NewPiecePlayed(this, col);
         }
+        
+        /// <summary>Create a new game with a remote player</summary>
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
             info.Content = "Recherche d'une partie...";
@@ -141,14 +155,20 @@ namespace p4_client
 
             Send("newGame," + player_uid);
         }
+
+        /// <summary>Shutdown the application by clicking the leave button</summary>
         private void LeaveGame_Click(object sender, RoutedEventArgs e)
         {
             ExitApp();
         }
+        
+        /// <summary>Shutdown the application by clicking on the cross</summary>
         protected override void OnClosed(EventArgs e)
         {
             ExitApp();
         }
+        
+        /// <summary>Send information to the server to close the socket properly</summary>
         private void ExitApp()
         {
             if (_ClientSocket.Connected)
@@ -163,12 +183,19 @@ namespace p4_client
             }
             Application.Current.Shutdown();
         }
+        
+        /// <summary>Print the message to the Message ListView</summary>
+        /// <param name="message">The message to print</param>
+        /// <param name="isMessageFromPlayers">true if it is the message from a player, false if it is auto-generated</param>
+        /// <param name="isMessageFromPlayer1">true if the message is from player 1, false if not</param>
         public void AddMessageToClient(string message, bool isMessageFromPlayers = false, bool isMessageFromPlayer1 = false)
         {
             Dispatcher.Invoke(() => {
                 Utilitaires.PrintMessageToClient(this, message, isMessageFromPlayers, isMessageFromPlayer1);
             });
         }
+        
+        /// <summary>Send the message by clicking the send button</summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (MessageClient.Text != "")
@@ -178,6 +205,8 @@ namespace p4_client
                 MessageClient.Text = "";
             }
         }
+        
+        /// <summary>Send the message by clicking enter</summary>
         private void EnterEvent(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && MessageClient.Text != "")
@@ -187,10 +216,14 @@ namespace p4_client
                 MessageClient.Text = "";
             }
         }
+        
+        /// <summary>Create a game with a bot</summary>
         private void Launch_Bot(object sender, RoutedEventArgs e)
         {
             LaunchGameAgainstBot();
         }
+        
+        /// <summary>Print informations when the player wants to play against a bot</summary>
         private void LaunchGameAgainstBot()
         {
             this.grid = new CustomGrid(this);
@@ -204,6 +237,9 @@ namespace p4_client
 
             CreateGame(new string[] { game_id, player1, bot });
         }
+        
+        /// <summary>Create a model with received informations</summary>
+        /// <param name="actions">All informations to create the game</param>
         private void CreateGame(string[] actions)
         {
             this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
@@ -214,6 +250,8 @@ namespace p4_client
             // Active les boutons pour le joueur 1
             if (this.player_uid == game.Player1.Id) this.grid!.ToggleEnableButtons();
         }
+        
+        /// <summary>Create a new game with a bot</summary>
         private void NewGameBot_Click(object sender, RoutedEventArgs e)
         {
             NewGame.Visibility = Visibility.Collapsed;

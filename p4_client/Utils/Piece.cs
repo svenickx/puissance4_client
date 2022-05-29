@@ -13,6 +13,12 @@ namespace p4_client.Utils
 {
     class Piece
     {
+
+        /// <summary>
+        /// Actions performed when the current Client played.
+        /// </summary>
+        /// <param name="app">The Main Window</param>
+        /// <param name="column">The column number where the piece is played</param>
         public static async void NewPiecePlayed(MainWindow app, int column)
         {
             bool nextAvailable = false;
@@ -40,6 +46,11 @@ namespace p4_client.Utils
                 BotPiece(app);
         }
 
+        /// <summary>
+        /// Actions performed when the remote Client played.
+        /// </summary>
+        /// <param name="app">The Main Window</param>
+        /// <param name="column">The column number where the piece is played</param>
         public static void NewPieceReceived(MainWindow app, int column)
         {
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
@@ -66,6 +77,10 @@ namespace p4_client.Utils
             else if (!app.grid!.ToggleEnableButtons()) app.game!.Draw();
         }
 
+        /// <summary>
+        /// Actions performed when the bot played.
+        /// </summary>
+        /// <param name="app">The Main Window</param>
         public static async void BotPiece(MainWindow app)
         {
             Random rnd = new();
@@ -91,6 +106,15 @@ namespace p4_client.Utils
             else if (!app.grid!.ToggleEnableButtons()) app.game!.Draw();
         }
 
+        /// <summary>
+        /// Place a piece on a designed Rectangle to create an animation
+        /// </summary>
+        /// <param name="row">The row where the new Rectangle must be printed</param>
+        /// <param name="column">The column where the new Rectangle must be printed</param>
+        /// <param name="nextAvailable">Is the bottom Rectangle free</param>
+        /// <param name="isPlayer1">Is the action performed by player1</param>
+        /// <param name="grille">The grid to modify</param>
+        /// <returns>true if the bottom piece is free, false if not</returns>
         public static bool NewPiece(int row, int column, bool nextAvailable, bool isPlayer1, Grid grille)
         {
             var element = (Rectangle?)grille

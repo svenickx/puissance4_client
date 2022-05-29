@@ -21,7 +21,10 @@ namespace p4_client.Model
             this.MainWindow = MainWindow;
         }
 
-        /// <summary>Call different funtions to check wether there is a line of the 4 same pieces on the grid.</summary>
+        /// <summary>
+        /// Call different funtions to check wether there is a line of the 4 same pieces on the grid.
+        /// </summary>
+        /// <param name="color">The color to check</param>
         /// <returns>true if there is a line of 4 in the grid, false if not.</returns>
         public bool CheckEndGame(SolidColorBrush color)
         {
@@ -29,6 +32,7 @@ namespace p4_client.Model
         }
 
         /// <summary>Check if there is 4 same pieces on at least one row of the grid.</summary>
+        /// <param name="color">The color to check</param>
         /// <returns>true if there is a line of 4 in the grid, false if not.</returns>
         private bool CheckRows(SolidColorBrush color)
         {
@@ -59,6 +63,7 @@ namespace p4_client.Model
         }
 
         /// <summary>Check if there is 4 same pieces on at least one column of the grid.</summary>
+        /// <param name="color">The color to check</param>
         /// <returns>true if there is a line of 4 in the grid, false if not.</returns>
         private bool CheckColumns(SolidColorBrush color)
         {
@@ -89,6 +94,7 @@ namespace p4_client.Model
         }
 
         /// <summary>Check if there is 4 same pieces on at least one diagonal of the grid.</summary>
+        /// <param name="color">The color to check</param>
         /// <returns>true if there is a line of 4 in the grid, false if not.</returns>
         private bool CheckBottomLeftDiagonals(SolidColorBrush color)
         {
@@ -119,6 +125,7 @@ namespace p4_client.Model
         }
 
         /// <summary>Check if there is 4 same pieces on at least one diagonal of the grid.</summary>
+        /// <param name="color">The color to check</param>
         /// <returns>true if there is a line of 4 in the grid, false if not.</returns>
         public bool CheckTopLeftDiagonals(SolidColorBrush color)
         {
@@ -189,6 +196,10 @@ namespace p4_client.Model
             }
         }
 
+        /// <summary>
+        /// Change the state of the buttons according to the player who has to play
+        /// </summary>
+        /// <returns>true if there is at least one button whose state has changed, otherwise returns false</returns>
         public bool ToggleEnableButtons()
         {
             bool isGridStillPlayable = false;

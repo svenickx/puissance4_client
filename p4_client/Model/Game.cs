@@ -19,6 +19,9 @@ namespace p4_client.Model {
             this.MainWindow = mainWindow;
         }
 
+        /// <summary>
+        /// Send to the server that the game finished as draw, print rematch and leave buttons on the UI
+        /// </summary>
         public void Draw()
         {
             MainWindow.Send("endGame," + this.Id + "," + MainWindow.player_uid + ",draw");
@@ -34,6 +37,10 @@ namespace p4_client.Model {
                     MainWindow.NewGame.Visibility = Visibility.Visible;
             });
         }
+
+        /// <summary>
+        /// Send to the server that the game finished as a lose, print rematch and leave buttons on the UI
+        /// </summary>
         public void Lose()
         {
             MainWindow.Send("endGame," + this.Id + "," + MainWindow.player_uid + ",victory");
@@ -51,6 +58,10 @@ namespace p4_client.Model {
 
             });
         }
+
+        /// <summary>
+        /// Send to the server that the game finished as a victory, print rematch and leave buttons on the UI
+        /// </summary>
         public void Victory()
         {
             MainWindow.Dispatcher.Invoke(() => {

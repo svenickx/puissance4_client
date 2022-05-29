@@ -11,6 +11,10 @@ namespace p4_client.Utils
 {
     class Utilitaires
     {
+        /// <summary>
+        /// Remove all color on the grid
+        /// </summary>
+        /// <param name="grille">The grid to clear</param>
         public static void ClearGrid(Grid grille)
         {
             for (int row = 1; row <= 6; row++)
@@ -23,11 +27,19 @@ namespace p4_client.Utils
                 }
             }
         }
+        /// <summary>
+        /// Remove all panels on the grid
+        /// </summary>
+        /// <param name="app">The Main Window</param>
         public static void ClearWindowUI(MainWindow app)
         {
             app.StartPage.Visibility = Visibility.Collapsed;
             app.GamePage.Visibility = Visibility.Collapsed;
         }
+        /// <summary>
+        /// Print informations on the UI when a match has been found
+        /// </summary>
+        /// <param name="app">The Main Window</param>
         public static void PrintGameFound(MainWindow app)
         {
             ClearWindowUI(app);
@@ -40,6 +52,13 @@ namespace p4_client.Utils
             app.playerTwo.Content = (app.player_uid == app.game!.Player2.Id) ? app.game!.Player2.Name + "\n(vous)" : app.game!.Player2.Name;
             app.CurrentPlayer.Content = app.game.Player1.Name + " commence la partie.";
         }
+        /// <summary>
+        /// Print a message in the Message ListView on the UI. Can be a message from one player to the other, or a generated message.
+        /// </summary>
+        /// <param name="app">The Main Window</param>
+        /// <param name="message">Message to transfer</param>
+        /// <param name="isMessageFromPlayers">true if a player sent the message, false if it is a generated message</param>
+        /// <param name="isMessageFromPlayer2">true if player2 sent the message, false if it was player1</param>
         public static void PrintMessageToClient(MainWindow app, string message, bool isMessageFromPlayers = false, bool isMessageFromPlayer2 = false)
         {
             app.MessageListView.SelectedIndex = app.MessageListView.Items.Count - 1;
