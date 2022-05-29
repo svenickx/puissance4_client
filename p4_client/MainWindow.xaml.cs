@@ -24,10 +24,11 @@ namespace p4_client
         public Game? game;
         public CustomGrid? grid;
         public bool isPlayer1 = false;
+        public bool isPlayingAgainstBot = false;
 
-        private Thread? listening_thread;
-        private readonly int delayFallPieces = 100;
-        private readonly int port = 10000;
+        public Thread? listening_thread;
+        public readonly int delayFallPieces = 100;
+        public readonly int port = 10000;
 
         public MainWindow()
         {
@@ -55,7 +56,8 @@ namespace p4_client
         private void Launch_Click(object sender, RoutedEventArgs e)
         {
             this.grid = new CustomGrid(this);
-            launch.Visibility = Visibility.Collapsed;
+            this.username.IsEnabled = false;
+            SearchButtons.Visibility = Visibility.Collapsed;
             LoopConnect();
 
             listening_thread = new Thread(Receive);
@@ -102,26 +104,16 @@ namespace p4_client
             } 
             else if (actions[0].Split(":")[0] == "matchFound") 
             {
-                this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow));
-                this.isPlayer1 = (this.player_uid == this.game!.player1.Id);
-
-                Dispatcher.Invoke(() => {
-                    Utilitaires.PrintGameFound(this);
-                });
-
-                // Active les boutons pour le joueur 1
-                if (this.player_uid == game.player1.Id) {
-                    ToggleEnableButtons();
-                }
+                CreateGame(actions);
             } 
             else if (actions[0] == "move")
             {
-                NewPieceReceived(Int32.Parse(actions[1]));
+                Piece.NewPieceReceived(this, Int32.Parse(actions[1]));
             }
             else if (actions[0] == "endGame")
             {
-                if (actions[1] == "victory") VictoryGame();
-                if (actions[1] == "draw") DrawGame();
+                if (actions[1] == "victory") game!.Victory();
+                if (actions[1] == "draw") game!.Draw();
             }
             else if (actions[0] == "message")
             {
@@ -135,111 +127,7 @@ namespace p4_client
         private void BtnNewPiece(object sender, RoutedEventArgs e)
         {
             int col = int.Parse((sender as Button)!.Tag.ToString()!);
-            NewPiecePlayed(col);
-        }
-        private async void NewPiecePlayed(int column)
-        {
-            bool nextAvailable = false;
-            ToggleEnableButtons();
-
-            Send("move," + game!.id + "," + player_uid + "," + column);
-            AddMessageToClient("Vous avez placé une pièce dans la colonne " + column.ToString());
-
-            for (int row = 1; row <= 6; row++)
-            {
-                // Le joueur actuel à placer une pièce
-                nextAvailable = Piece.NewPiece(row, column, nextAvailable, isPlayer1, grille);
-                CurrentPlayer.Content = "A votre adversaire de jouer!";
-                if (!nextAvailable) break;
-                await Task.Delay(delayFallPieces);
-            }
-            // vérifie si l'adversaire à gagné ou s'il est encore possible de jouer
-            bool isEndGame = (isPlayer1) ? grid!.CheckEndGame(game!.player2.Color) : grid!.CheckEndGame(game!.player1.Color);
-            if (isEndGame) 
-            {
-                this.grid!.BlinkRectanglesWithoutDispatcher();
-            }
-        }
-        private void NewPieceReceived(int column)
-        {
-            AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
-            for (int row = 1; row <= 6; row++)
-            {
-                bool nextAvailable = false;
-                Dispatcher.Invoke(() =>
-                {
-                   // Le joueur adversaire à placer une pièce
-                    nextAvailable = Piece.NewPiece(row, column, nextAvailable, !isPlayer1, grille);
-                    CurrentPlayer.Content = "A vous de jouer!";
-                });
-                if (!nextAvailable) break;
-                Thread.Sleep(delayFallPieces);
-            }
-
-            // vérifie si l'adversaire à gagné ou s'il est encore possible de jouer
-            bool isEndGame = (isPlayer1) ? grid!.CheckEndGame(game!.player1.Color) : grid!.CheckEndGame(game!.player2.Color);
-            if (isEndGame)
-            {
-                LoseGame();
-                this.grid!.BlinkRectanglesWithDispatcher();
-            }
-            else if (!ToggleEnableButtons()) DrawGame();
-        }
-        private void LoseGame()
-        {
-            Send("endGame," + game!.id + "," + this.player_uid + ",victory");
-            AddMessageToClient("Vous avez perdu la partie!");
-
-            Dispatcher.Invoke(() => { 
-                CurrentPlayer.Content = "Vous avez perdu!";
-                info.FontSize = 30;
-                NewGame.Visibility = Visibility.Visible;
-                LeaveGame.Visibility = Visibility.Visible;
-            });
-        }
-        private void VictoryGame()
-        {
-            Dispatcher.Invoke(() => {
-            AddMessageToClient("Vous avez gagné la partie!");
-                CurrentPlayer.Content = "Vous avez gagné!";
-                info.FontSize = 30;
-                NewGame.Visibility = Visibility.Visible;
-                LeaveGame.Visibility = Visibility.Visible;
-            });
-        }
-        private void DrawGame()
-        {
-            Send("endGame," + game!.id + "," + player_uid + ",draw");
-            AddMessageToClient("La partie se termine sur une égalité!");
-
-            Dispatcher.Invoke(() => {
-                CurrentPlayer.Content = "Egalité!";
-                NewGame.Visibility = Visibility.Visible;
-                LeaveGame.Visibility = Visibility.Visible;
-            });
-        }
-        private bool ToggleEnableButtons()
-        {
-            bool isGridStillPlayable = false;
-
-            for (int col = 0; col <= 6; col++)
-            {
-                Dispatcher.Invoke(() => {
-                    var btn = (Button?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 0 && Grid.GetColumn(e) == col);
-                    var rectangleBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 1 && Grid.GetColumn(e) == col);
-
-                    if (rectangleBellow!.Fill.Equals(Brushes.White))
-                    {
-                        btn!.IsEnabled = !btn.IsEnabled;
-                        isGridStillPlayable = true;
-                    } 
-                    else
-                    {
-                        btn!.IsEnabled = false;
-                    }
-                });
-            }
-            return isGridStillPlayable;
+            Piece.NewPiecePlayed(this, col);
         }
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
@@ -265,14 +153,17 @@ namespace p4_client
         {
             if (_ClientSocket.Connected)
             {
-                Send("quit," + game!.id + "," + player_uid);
+                if (game != null) 
+                    Send("quit," + game!.Id + "," + player_uid);
+                else
+                    Send("quit, ," + player_uid);
                 _ClientSocket.Shutdown(SocketShutdown.Both);
                 _ClientSocket.Close();
                 listening_thread!.Interrupt();
             }
             Application.Current.Shutdown();
         }
-        private void AddMessageToClient(string message, bool isMessageFromPlayers = false, bool isMessageFromPlayer1 = false)
+        public void AddMessageToClient(string message, bool isMessageFromPlayers = false, bool isMessageFromPlayer1 = false)
         {
             Dispatcher.Invoke(() => {
                 Utilitaires.PrintMessageToClient(this, message, isMessageFromPlayers, isMessageFromPlayer1);
@@ -282,7 +173,7 @@ namespace p4_client
         {
             if (MessageClient.Text != "")
             {
-                Send("message," + this.game!.id + "," + this.player_uid + "," + MessageClient.Text);
+                Send("message," + this.game!.Id + "," + this.player_uid + "," + MessageClient.Text);
                 AddMessageToClient("Vous: " + MessageClient.Text, true, true);
                 MessageClient.Text = "";
             }
@@ -291,10 +182,47 @@ namespace p4_client
         {
             if (e.Key == Key.Enter && MessageClient.Text != "")
             {
-                Send("message," + this.game!.id + "," + this.player_uid + "," + MessageClient.Text);
+                Send("message," + this.game!.Id + "," + this.player_uid + "," + MessageClient.Text);
                 AddMessageToClient("Vous: " + MessageClient.Text, true, true);
                 MessageClient.Text = "";
             }
+        }
+        private void Launch_Bot(object sender, RoutedEventArgs e)
+        {
+            LaunchGameAgainstBot();
+        }
+        private void LaunchGameAgainstBot()
+        {
+            this.grid = new CustomGrid(this);
+            launch.Visibility = Visibility.Collapsed;
+            this.player_uid = Guid.NewGuid().ToString();
+
+            string game_id = "matchFound:" + Guid.NewGuid().ToString();
+            string player1 = username.Text + ":" + this.player_uid;
+            string bot = "Bot:" + Guid.NewGuid().ToString();
+            this.isPlayingAgainstBot = true;
+
+            CreateGame(new string[] { game_id, player1, bot });
+        }
+        private void CreateGame(string[] actions)
+        {
+            this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
+            this.isPlayer1 = (this.player_uid == this.game!.Player1.Id);
+
+            Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
+
+            // Active les boutons pour le joueur 1
+            if (this.player_uid == game.Player1.Id) this.grid!.ToggleEnableButtons();
+        }
+        private void NewGameBot_Click(object sender, RoutedEventArgs e)
+        {
+            NewGame.Visibility = Visibility.Collapsed;
+            LeaveGame.Visibility = Visibility.Collapsed;
+
+            Utilitaires.ClearGrid(grille);
+            MessageListView.Items.Clear();
+
+            LaunchGameAgainstBot();
         }
     }
 }

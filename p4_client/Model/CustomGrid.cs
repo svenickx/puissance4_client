@@ -188,5 +188,29 @@ namespace p4_client.Model
                 await Task.Delay(500);
             }
         }
+
+        public bool ToggleEnableButtons()
+        {
+            bool isGridStillPlayable = false;
+
+            for (int col = 0; col <= 6; col++)
+            {
+                Dispatcher.Invoke(() => {
+                    var btn = (Button?)MainWindow.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 0 && Grid.GetColumn(e) == col);
+                    var rectangleBellow = (Rectangle?)MainWindow.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == 1 && Grid.GetColumn(e) == col);
+
+                    if (rectangleBellow!.Fill.Equals(Brushes.White))
+                    {
+                        btn!.IsEnabled = !btn.IsEnabled;
+                        isGridStillPlayable = true;
+                    }
+                    else
+                    {
+                        btn!.IsEnabled = false;
+                    }
+                });
+            }
+            return isGridStillPlayable;
+        }
     }
 }

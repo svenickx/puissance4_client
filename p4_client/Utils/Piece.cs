@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,84 @@ namespace p4_client.Utils
 {
     class Piece
     {
+        public static async void NewPiecePlayed(MainWindow app, int column)
+        {
+            bool nextAvailable = false;
+            app.grid!.ToggleEnableButtons();
+
+            app.Send("move," + app.game!.Id + "," + app.player_uid + "," + column);
+            app.AddMessageToClient("Vous avez placé une pièce dans la colonne " + column.ToString());
+            app.CurrentPlayer.Content = "A votre adversaire de jouer!";
+
+            for (int row = 1; row <= 6; row++)
+            {
+                // Le joueur actuel à placer une pièce
+                nextAvailable = NewPiece(row, column, nextAvailable, app.isPlayer1, app.grille);
+                if (!nextAvailable) break;
+                await Task.Delay(app.delayFallPieces);
+            }
+
+            // vérifie si l'adversaire à gagné ou s'il est encore possible de jouer
+            bool isEndGame = (app.isPlayer1) ? app.grid!.CheckEndGame(app.game!.Player2.Color) : app.grid!.CheckEndGame(app.game!.Player1.Color);
+            if (isEndGame && app.isPlayingAgainstBot)
+                app.game!.Victory();
+            if (isEndGame)
+                app.grid!.BlinkRectanglesWithoutDispatcher();
+            else if (app.isPlayingAgainstBot)
+                BotPiece(app);
+        }
+
+        public static void NewPieceReceived(MainWindow app, int column)
+        {
+            app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
+            for (int row = 1; row <= 6; row++)
+            {
+                bool nextAvailable = false;
+                app.Dispatcher.Invoke(() =>
+                {
+                    // Le joueur adversaire à placer une pièce
+                    nextAvailable = Piece.NewPiece(row, column, nextAvailable, !app.isPlayer1, app.grille);
+                    app.CurrentPlayer.Content = "A vous de jouer!";
+                });
+                if (!nextAvailable) break;
+                Thread.Sleep(app.delayFallPieces);
+            }
+
+            // vérifie si l'adversaire à gagné ou s'il est encore possible de jouer
+            bool isEndGame = (app.isPlayer1) ? app.grid!.CheckEndGame(app.game!.Player1.Color) : app.grid!.CheckEndGame(app.game!.Player2.Color);
+            if (isEndGame)
+            {
+                app.game!.Lose();
+                app.grid!.BlinkRectanglesWithDispatcher();
+            }
+            else if (!app.grid!.ToggleEnableButtons()) app.game!.Draw();
+        }
+
+        public static async void BotPiece(MainWindow app)
+        {
+            Random rnd = new();
+            int column = rnd.Next(0, 7);
+            app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
+            for (int row = 1; row <= 6; row++)
+            {
+                bool nextAvailable = false;
+                // Le joueur adversaire à placer une pièce
+                nextAvailable = NewPiece(row, column, nextAvailable, !app.isPlayer1, app.grille);
+                app.CurrentPlayer.Content = "A vous de jouer!";
+                if (!nextAvailable) break;
+                await Task.Delay(app.delayFallPieces);
+            }
+
+            // vérifie si l'adversaire à gagné ou s'il est encore possible de jouer
+            bool isEndGame = (app.isPlayer1) ? app.grid!.CheckEndGame(app.game!.Player1.Color) : app.grid!.CheckEndGame(app.game!.Player2.Color);
+            if (isEndGame)
+            {
+                app.game!.Lose();
+                app.grid!.BlinkRectanglesWithoutDispatcher();
+            }
+            else if (!app.grid!.ToggleEnableButtons()) app.game!.Draw();
+        }
+
         public static bool NewPiece(int row, int column, bool nextAvailable, bool isPlayer1, Grid grille)
         {
             var element = (Rectangle?)grille
