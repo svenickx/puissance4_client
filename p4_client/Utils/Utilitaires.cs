@@ -26,17 +26,41 @@ namespace p4_client.Utils
 
         public static void PrintGameFound(MainWindow app)
         {
-            app.info.Content = "Partie trouvée";
-            app.username.Visibility = Visibility.Collapsed;
+            ClearWindowUI(app);
+            app.GamePage.Visibility = Visibility.Visible;
+            app.MessageListView.Items.Clear();
 
-            app.playerOne.Visibility = Visibility.Visible;
-            app.playerOne.Content = (app.player_uid == app.game!.player1.id) ? app.game!.player1.name + "\n(vous)" : app.game!.player1.name;
-            app.playerTwo.Visibility = Visibility.Visible;
-            app.playerTwo.Content = (app.player_uid == app.game!.player2.id) ? app.game!.player2.name + "\n(vous)" : app.game!.player2.name;
+            PrintMessageToClient(app, "Une partie a été trouvée!");
+            PrintMessageToClient(app, app.game!.player1.Name + " VS " + app.game!.player2.Name);
+            app.playerOne.Content = (app.player_uid == app.game!.player1.Id) ? app.game!.player1.Name + "\n(vous)" : app.game!.player1.Name;
+            app.playerTwo.Content = (app.player_uid == app.game!.player2.Id) ? app.game!.player2.Name + "\n(vous)" : app.game!.player2.Name;
+            app.CurrentPlayer.Content = app.game.player1.Name + " commence la partie.";
+        }
+        public static void ClearWindowUI(MainWindow app)
+        {
+            app.StartPage.Visibility = Visibility.Collapsed;
+            app.GamePage.Visibility = Visibility.Collapsed;
+        }
 
-            app.grille.Visibility = Visibility.Visible;
+        public static void PrintMessageToClient(MainWindow app, string message, bool isMessageFromPlayers = false, bool isMessageFromPlayer2 = false)
+        {
+            app.MessageListView.SelectedIndex = app.MessageListView.Items.Count - 1;
+            app.MessageListView.Items.Remove(app.MessageListView.SelectedIndex);
 
-            app.info.Content = app.game!.player1.name + " commence la partie.";
+            ListViewItem listViewItem = new();
+            Label messageLabel = new();
+            messageLabel.Content = message;
+            listViewItem.Content = messageLabel;
+            if (isMessageFromPlayers)
+            {
+                listViewItem.Background = (isMessageFromPlayer2) ? app.game!.player2.Color : app.game!.player1.Color;
+            }
+
+            app.MessageListView.Items.Add(listViewItem);
+
+            app.MessageListView.Items.Add(new ListViewItem());
+            app.MessageListView.SelectedIndex = app.MessageListView.Items.Count - 1;
+            app.MessageListView.ScrollIntoView(app.MessageListView.SelectedItem);
         }
     }
 }
