@@ -83,7 +83,7 @@ namespace p4_client.Utils
         /// <param name="app">The Main Window</param>
         public static async void BotPiece(MainWindow app)
         {
-            int colToPlay = -1;
+            int colToPlay;
             colToPlay = CheckPlayPossibilities(app.grille);
             Console.WriteLine("Meilleur action: " + colToPlay + "\n");
             
@@ -163,7 +163,7 @@ namespace p4_client.Utils
 
         private static int CheckPlayPossibilities(Grid grille)
         {
-            Dictionary<int, int> allPriorities = new();
+            Dictionary<int, int> allPriorities;
             Dictionary<int, int> priorities = new()
             {
                 { 1, -1 },

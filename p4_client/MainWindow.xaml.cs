@@ -27,8 +27,11 @@ namespace p4_client
         public bool isPlayingAgainstBot = false;
 
         public Thread? listening_thread;
-        public readonly int delayFallPieces = 100;
-        public readonly int port = 10000;
+        public readonly int delayFallPieces = 500;
+        
+        private readonly IPAddress ipRemoteServer = IPAddress.Parse("212.194.96.4");
+        private readonly IPAddress ipLocalServer = IPAddress.Loopback;
+        private readonly int port = 10000;
 
         public MainWindow()
         {
@@ -36,13 +39,14 @@ namespace p4_client
         }
         public void LoopConnect()
         {
+            IPAddress ip = (onRemoteServer.IsChecked ?? false) ? ipRemoteServer : ipLocalServer;
             int attempts = 0;
             while (!_ClientSocket.Connected)
             {
                 try
                 {
                     attempts++;
-                    _ClientSocket.Connect(IPAddress.Loopback, this.port);
+                    _ClientSocket.Connect(ip, this.port);
                 }
                 catch (SocketException)
                 {
@@ -60,6 +64,8 @@ namespace p4_client
             this.grid = new CustomGrid(this);
             this.username.IsEnabled = false;
             SearchButtons.Visibility = Visibility.Collapsed;
+            onRemoteServer.Visibility = Visibility.Collapsed;
+            pseudoLabel.Content = "Votre nom d'utilisateur";
             LoopConnect();
 
             listening_thread = new Thread(Receive);
