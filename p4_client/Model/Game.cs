@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 namespace p4_client.Model {
-    public class Game : EventArgs {
+    public class Game {
         public string Id { get; set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
@@ -62,9 +62,10 @@ namespace p4_client.Model {
         /// <summary>
         /// Send to the server that the game finished as a victory, print rematch and leave buttons on the UI
         /// </summary>
-        public void Victory()
+        public void Victory(bool isDisconnected = false)
         {
             MainWindow.Dispatcher.Invoke(() => {
+                if (isDisconnected) MainWindow.AddMessageToClient("Votre adversaire s'est déconnecté!");
                 MainWindow.AddMessageToClient("Vous avez gagné la partie!");
                 MainWindow.CurrentPlayer.Content = "Vous avez gagné!";
                 MainWindow.info.FontSize = 30;

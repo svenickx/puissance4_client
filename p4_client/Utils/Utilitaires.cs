@@ -28,6 +28,14 @@ namespace p4_client.Utils
             }
         }
         /// <summary>
+        /// Remove all messages in the chat
+        /// </summary>
+        /// <param name="messageListView">The chat to clear</param>
+        public static void ClearChat(ListView messageListView)
+        {
+            messageListView.Items.Clear();
+        }
+        /// <summary>
         /// Remove all panels on the grid
         /// </summary>
         /// <param name="app">The Main Window</param>
@@ -35,6 +43,8 @@ namespace p4_client.Utils
         {
             app.StartPage.Visibility = Visibility.Collapsed;
             app.GamePage.Visibility = Visibility.Collapsed;
+            ClearGrid(app.grille);
+            ClearChat(app.MessageListView);
         }
         /// <summary>
         /// Print informations on the UI when a match has been found
@@ -44,7 +54,9 @@ namespace p4_client.Utils
         {
             ClearWindowUI(app);
             app.GamePage.Visibility = Visibility.Visible;
-            app.MessageListView.Items.Clear();
+            app.NewGame.Visibility = Visibility.Collapsed;
+            app.LeaveGame.Visibility = Visibility.Collapsed;
+            app.NewGameAgainstBot.Visibility = Visibility.Collapsed;
 
             PrintMessageToClient(app, "Une partie a été trouvée!");
             PrintMessageToClient(app, app.game!.Player1.Name + " VS " + app.game!.Player2.Name);

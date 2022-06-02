@@ -100,8 +100,8 @@ namespace p4_client.Utils
             bool isEndGame = (app.isPlayer1) ? app.grid!.CheckEndGame(app.game!.Player1.Color) : app.grid!.CheckEndGame(app.game!.Player2.Color);
             if (isEndGame)
             {
-                app.game!.Lose();
                 app.grid!.BlinkRectanglesWithoutDispatcher();
+                app.game!.Lose();
             }
             else if (!app.grid!.ToggleEnableButtons()) app.game!.Draw();
         }

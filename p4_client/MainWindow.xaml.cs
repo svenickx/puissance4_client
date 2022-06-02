@@ -123,11 +123,12 @@ namespace p4_client
             else if (actions[0] == "endGame")
             {
                 if (actions[1] == "victory") game!.Victory();
+                if (actions[1] == "disconnected") game!.Victory(true);
                 if (actions[1] == "draw") game!.Draw();
             }
             else if (actions[0] == "message")
             {
-                AddMessageToClient(actions[1], true);
+                AddMessageToClient(actions[1], true, !isPlayer1);
             }
             else 
             {
@@ -145,13 +146,9 @@ namespace p4_client
         /// <summary>Create a new game with a remote player</summary>
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
-            info.Content = "Recherche d'une partie...";
-            info.FontSize = 22;
-
-            NewGame.Visibility = Visibility.Collapsed;
-            LeaveGame.Visibility = Visibility.Collapsed;
-
-            Utilitaires.ClearGrid(grille);
+            Utilitaires.ClearWindowUI(this);
+            StartPage.Visibility = Visibility.Visible;
+            info.FontSize = 16;
 
             Send("newGame," + player_uid);
         }
@@ -201,7 +198,7 @@ namespace p4_client
             if (MessageClient.Text != "")
             {
                 Send("message," + this.game!.Id + "," + this.player_uid + "," + MessageClient.Text);
-                AddMessageToClient("Vous: " + MessageClient.Text, true, true);
+                AddMessageToClient("Vous: " + MessageClient.Text, true, isPlayer1);
                 MessageClient.Text = "";
             }
         }
@@ -212,7 +209,7 @@ namespace p4_client
             if (e.Key == Key.Enter && MessageClient.Text != "")
             {
                 Send("message," + this.game!.Id + "," + this.player_uid + "," + MessageClient.Text);
-                AddMessageToClient("Vous: " + MessageClient.Text, true, true);
+                AddMessageToClient("Vous: " + MessageClient.Text, true, isPlayer1);
                 MessageClient.Text = "";
             }
         }
