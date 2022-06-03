@@ -1,5 +1,8 @@
 ﻿using p4_client.Model;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -78,6 +81,53 @@ namespace p4_client.Utils
             app.MessageListView.Items.Add(new ListViewItem());
             app.MessageListView.SelectedIndex = app.MessageListView.Items.Count - 1;
             app.MessageListView.ScrollIntoView(app.MessageListView.SelectedItem);
+        }
+
+        public static void CreateFile(string filePath, Game game)
+        {
+            //Création de fichier si aucun créer
+            if (!File.Exists(filePath))
+            {
+                using StreamWriter sw = File.CreateText(filePath);
+                sw.WriteLine("Duel entre " + game.Player1.Name + " et " + game.Player2.Name + "\n");
+            }
+            
+        }
+
+        /// <summary>
+        ///message == id du joueur : nom du joueur : colone jouée
+        /// </summary>
+        public static void WriteInFile(string filePath, string message, Game game)
+        {
+            if (!File.Exists(filePath)) CreateFile(filePath, game);
+            //Écriture a la suite dans le fichier
+            using (StreamWriter sw = File.AppendText(filePath))
+            {
+                //id:nom:colonne
+                sw.WriteLine(message);
+            }
+        }
+
+        public static string[] ReadFile(string filePath)
+        {
+            if (!File.Exists(filePath)) return new string[0];
+            string[] lines = File.ReadAllLines(filePath);
+            return lines;
+        }
+
+        public static void OpenFile(string filePath)
+        {
+            string fileName = filePath.Split('\\')[filePath.Count(f => f == '\\')];
+            try
+            {
+                // The following call to Start succeeds if test.txt exists.
+                Console.WriteLine("\nTrying to launch '" + filePath + "'...");
+                Process.Start("notepad.exe", filePath);
+            }
+            catch (Win32Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

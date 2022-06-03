@@ -25,6 +25,7 @@ namespace p4_client
         public CustomGrid? grid;
         public bool isPlayer1 = false;
         public bool isPlayingAgainstBot = false;
+        public string? fileName;
 
         public Thread? listening_thread;
         public readonly int delayFallPieces = 100;
@@ -118,12 +119,13 @@ namespace p4_client
             } 
             else if (actions[0] == "move")
             {
-                Piece.NewPieceReceived(this, Int32.Parse(actions[1]));
+                Piece.NewPieceReceived(this, Int32.Parse(actions[1]), fileName);
             }
             else if (actions[0] == "endGame")
             {
                 if (actions[1] == "victory") game!.Victory();
                 if (actions[1] == "draw") game!.Draw();
+                Utilitaires.OpenFile(fileName);
             }
             else if (actions[0] == "message")
             {
@@ -139,7 +141,7 @@ namespace p4_client
         private void BtnNewPiece(object sender, RoutedEventArgs e)
         {
             int col = int.Parse((sender as Button)!.Tag.ToString()!);
-            Piece.NewPiecePlayed(this, col);
+            Piece.NewPiecePlayed(this, col, fileName);
         }
         
         /// <summary>Create a new game with a remote player</summary>
@@ -244,6 +246,8 @@ namespace p4_client
         {
             this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
             this.isPlayer1 = (this.player_uid == this.game!.Player1.Id);
+            this.fileName = AppDomain.CurrentDomain.BaseDirectory + this.game.Player1.Name + "-" + this.game.Player2.Name + ".txt"; //path du fichier de sauvegarde
+            Utilitaires.CreateFile(fileName, game);
 
             Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
 

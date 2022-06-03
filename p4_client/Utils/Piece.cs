@@ -19,13 +19,24 @@ namespace p4_client.Utils
         /// </summary>
         /// <param name="app">The Main Window</param>
         /// <param name="column">The column number where the piece is played</param>
-        public static async void NewPiecePlayed(MainWindow app, int column)
+        public static async void NewPiecePlayed(MainWindow app, int column, string fileName)
         {
             bool nextAvailable = false;
             app.grid!.ToggleEnableButtons();
 
             app.Send("move," + app.game!.Id + "," + app.player_uid + "," + column);
             app.AddMessageToClient("Vous avez placé une pièce dans la colonne " + column.ToString());
+
+            if (app.isPlayer1)
+            {
+                Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
+            }
+            else
+            {
+                Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game);
+
+            }
+
             app.CurrentPlayer.Content = "A votre adversaire de jouer!";
 
             for (int row = 1; row <= 6; row++)
@@ -43,7 +54,7 @@ namespace p4_client.Utils
             if (isEndGame)
                 app.grid!.BlinkRectanglesWithoutDispatcher();
             else if (app.isPlayingAgainstBot)
-                BotPiece(app);
+                BotPiece(app, fileName);
         }
 
         /// <summary>
@@ -51,9 +62,19 @@ namespace p4_client.Utils
         /// </summary>
         /// <param name="app">The Main Window</param>
         /// <param name="column">The column number where the piece is played</param>
-        public static void NewPieceReceived(MainWindow app, int column)
+        public static void NewPieceReceived(MainWindow app, int column, string fileName)
         {
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
+            if (app.isPlayer1)
+            {
+                Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game);
+            }
+            else
+            {
+                Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
+
+            }
+
             for (int row = 1; row <= 6; row++)
             {
                 bool nextAvailable = false;
@@ -81,11 +102,12 @@ namespace p4_client.Utils
         /// Actions performed when the bot played.
         /// </summary>
         /// <param name="app">The Main Window</param>
-        public static async void BotPiece(MainWindow app)
+        public static async void BotPiece(MainWindow app, string fileName)
         {
             Random rnd = new();
             int column = rnd.Next(0, 7);
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
+            Utilitaires.WriteInFile(fileName, "7355608:Bot:" + column.ToString(), app.game!);
             for (int row = 1; row <= 6; row++)
             {
                 bool nextAvailable = false;
