@@ -46,6 +46,7 @@ namespace p4_client.Utils
         {
             app.StartPage.Visibility = Visibility.Collapsed;
             app.GamePage.Visibility = Visibility.Collapsed;
+            app.Replay.Visibility = Visibility.Collapsed;
             ClearGrid(app.grille);
             ClearChat(app.MessageListView);
         }
@@ -67,6 +68,43 @@ namespace p4_client.Utils
             app.playerTwo.Content = (app.player_uid == app.game!.Player2.Id) ? app.game!.Player2.Name + "\n(vous)" : app.game!.Player2.Name;
             app.CurrentPlayer.Content = app.game.Player1.Name + " commence la partie.";
         }
+        /// <summary>
+        /// Print informations on the UI when a match has been found
+        /// </summary>
+        /// <param name="app">The Main Window</param>
+        public static void PrintGameReplay(MainWindow app)
+        {
+            ClearWindowUI(app);
+            //app.GamePage.Visibility = Visibility.Visible;
+            app.Replay.Visibility = Visibility.Visible;
+            app.NewGame.Visibility = Visibility.Collapsed;
+            app.LeaveGame.Visibility = Visibility.Collapsed;
+            app.NewGameAgainstBot.Visibility = Visibility.Collapsed;
+            Console.WriteLine(app.allReplayFile.Length);
+            if (app.allReplayFile.Length > 0)
+            {
+                int i = 0;
+                foreach (string s in app.allReplayFile)
+                {
+                    int pos = s.LastIndexOf("\\") + 1;
+                    string fileName = s.Substring(pos, s.Length - pos);
+                    app.infos.RowDefinitions.Add(new RowDefinition());
+                    Button name = new Button
+                    {
+                        Content = fileName,
+                        Tag = i,
+                        Margin = new Thickness(3),
+                    };
+                    name.Click += app.ReplaySelected;
+                    app.infos.Children.Add(name);
+                    Grid.SetRow(name, app.infos.RowDefinitions.Count - 1);
+                    Grid.SetColumn(name, 1);
+                    Console.WriteLine("nom écrit");
+                    i++;
+                }
+            }
+        }
+
         /// <summary>
         /// Print a message in the Message ListView on the UI. Can be a message from one player to the other, or a generated message.
         /// </summary>
@@ -97,13 +135,19 @@ namespace p4_client.Utils
 
         public static void CreateFile(string filePath, Game game)
         {
-            //Création de fichier si aucun créer
-            if (!File.Exists(filePath))
+            string test = filePath.Remove(filePath.LastIndexOf("\\"));
+            if (!Directory.Exists(test))
             {
-                using StreamWriter sw = File.CreateText(filePath);
-                sw.WriteLine("Duel entre " + game.Player1.Name + " et " + game.Player2.Name + "\n");
+                Directory.CreateDirectory(test);
             }
-            
+            //Création de fichier si aucun créer
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.CreateText(filePath);
+
+
         }
 
         /// <summary>

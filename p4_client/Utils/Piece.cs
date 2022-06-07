@@ -19,26 +19,30 @@ namespace p4_client.Utils
         /// </summary>
         /// <param name="app">The Main Window</param>
         /// <param name="column">The column number where the piece is played</param>
-        public static async void NewPiecePlayed(MainWindow app, int column, string fileName)
+        public static async void NewPiecePlayed(MainWindow app, int column, string fileName, bool replay)
         {
             bool nextAvailable = false;
-            app.grid!.ToggleEnableButtons();
-
-            app.Send("move," + app.game!.Id + "," + app.player_uid + "," + column);
-            app.AddMessageToClient("Vous avez placé une pièce dans la colonne " + column.ToString());
-
-            if (app.isPlayer1)
+            if (!replay)
             {
-                Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
-            }
-            else
-            {
-                Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game);
+                app.grid!.ToggleEnableButtons();
+
+                app.Send("move," + app.game!.Id + "," + app.player_uid + "," + column);
+                app.AddMessageToClient("Vous avez placé une pièce dans la colonne " + column.ToString());
+
+                if (app.isPlayer1)
+                {
+                    Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
+                }
+                else
+                {
+                    Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game);
+
+                }
+
+                app.CurrentPlayer.Content = "A votre adversaire de jouer!";
 
             }
-
-            app.CurrentPlayer.Content = "A votre adversaire de jouer!";
-
+            
             for (int row = 1; row <= 6; row++)
             {
                 // Le joueur actuel à placer une pièce
@@ -55,6 +59,7 @@ namespace p4_client.Utils
                 app.grid!.BlinkRectanglesWithoutDispatcher();
             else if (app.isPlayingAgainstBot)
                 BotPiece(app, fileName);
+            
         }
 
         /// <summary>
@@ -72,7 +77,6 @@ namespace p4_client.Utils
             else
             {
                 Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
-
             }
 
             for (int row = 1; row <= 6; row++)
@@ -107,13 +111,21 @@ namespace p4_client.Utils
             int colToPlay;
             colToPlay = CheckPlayPossibilities(app.grille);
             Console.WriteLine("Meilleur action: " + colToPlay + "\n");
-            
+
             if (colToPlay == -1)
             {
                 Random rnd = new();
                 colToPlay = rnd.Next(0, 7);
             }
-            
+            if (app.isPlayer1)
+            {
+                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game);
+            }
+            else
+            {
+                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game);
+            }
+
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + colToPlay.ToString());
             for (int row = 1; row <= 6; row++)
             {

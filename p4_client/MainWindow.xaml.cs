@@ -1,6 +1,8 @@
 ﻿using p4_client.Model;
 using p4_client.Utils;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -26,6 +28,8 @@ namespace p4_client
         public bool isPlayer1 = false;
         public bool isPlayingAgainstBot = false;
         public string? fileName;
+        public string[] allReplayFile = Array.Empty<string>();
+        private string? fileChoosen;
 
         public Thread? listening_thread;
         public readonly int delayFallPieces = 500;
@@ -148,9 +152,9 @@ namespace p4_client
         private void BtnNewPiece(object sender, RoutedEventArgs e)
         {
             int col = int.Parse((sender as Button)!.Tag.ToString()!);
-            Piece.NewPiecePlayed(this, col, fileName);
+            Piece.NewPiecePlayed(this, col, fileName, false);
         }
-        
+
         /// <summary>Create a new game with a remote player</summary>
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
@@ -249,7 +253,7 @@ namespace p4_client
         {
             this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
             this.isPlayer1 = (this.player_uid == this.game!.Player1.Id);
-            this.fileName = AppDomain.CurrentDomain.BaseDirectory + this.game.Player1.Name + "-" + this.game.Player2.Name + ".txt"; //path du fichier de sauvegarde
+            this.fileName = AppDomain.CurrentDomain.BaseDirectory + "\\save\\" + this.game.Player1.Name + "-" + this.game.Player2.Name + ".txt"; //path du fichier de sauvegarde
             Utilitaires.CreateFile(fileName, game);
 
             Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
@@ -268,6 +272,54 @@ namespace p4_client
             MessageListView.Items.Clear();
 
             LaunchGameAgainstBot();
+        }
+
+        private void Launch_Replay(object sender, RoutedEventArgs e)
+        {
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\save\\";
+            string[] files = Directory.GetFiles(filePath);
+            List<string> list = new List<string>(this.allReplayFile.ToList());
+            foreach (string file in files)
+            {
+                list.Add(file);
+            }
+            this.allReplayFile = list.ToArray();
+            Console.WriteLine(this.allReplayFile.Length);
+            ShowAllReplayFile();
+        }
+
+        private void ShowAllReplayFile()
+        {
+            launch.Visibility = Visibility.Collapsed;
+            Utilitaires.PrintGameReplay(this);
+
+        }
+        public async void ReplaySelected(object sender, RoutedEventArgs e)
+        {
+            int[] piece = new int[7];
+            this.isPlayer1 = !this.isPlayer1;
+            this.grid = new CustomGrid(this);
+            fileChoosen = this.allReplayFile[(int)((Button)sender).Tag];
+            string[] allMove = Utilitaires.ReadFile(fileChoosen);
+            Console.WriteLine(fileChoosen);
+            this.game = new Game(
+                "Replay:0", 
+                new Player(allMove[0].Split(":")[1] + ":" + allMove[0].Split(":")[0], Brushes.Red), 
+                new Player(allMove[1].Split(":")[1] + ":" + allMove[1].Split(":")[0], Brushes.Yellow),
+                this);
+            Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
+            this.MessageBox.Visibility = Visibility.Collapsed;
+            this.CurrentPlayer.Content = "Le replay est en cours";
+            foreach (string line in allMove)
+            {
+                string[] info = line.Split(":");
+                Piece.NewPiecePlayed(this, int.Parse(info[2]), "", true);
+                Console.WriteLine(line);
+                await Task.Delay(500 * ( 6 - piece[int.Parse(info[2])]));
+                piece[int.Parse(info[2])]++;
+                this.isPlayer1 = !this.isPlayer1;
+            }
+            this.CurrentPlayer.Content = "Le replay est terminé";
         }
     }
 }
