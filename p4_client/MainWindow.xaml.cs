@@ -1,6 +1,8 @@
 ﻿using p4_client.Model;
 using p4_client.Utils;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -25,10 +27,16 @@ namespace p4_client
         public CustomGrid? grid;
         public bool isPlayer1 = false;
         public bool isPlayingAgainstBot = false;
+        public string? fileName;
+        public string[] allReplayFile = Array.Empty<string>();
+        private string? fileChoosen;
 
         public Thread? listening_thread;
-        public readonly int delayFallPieces = 100;
-        public readonly int port = 10000;
+        public readonly int delayFallPieces = 500;
+        
+        private readonly IPAddress ipRemoteServer = IPAddress.Parse("212.194.96.4");
+        private readonly IPAddress ipLocalServer = IPAddress.Loopback;
+        private readonly int port = 10000;
 
         public MainWindow()
         {
@@ -36,13 +44,14 @@ namespace p4_client
         }
         public void LoopConnect()
         {
+            IPAddress ip = (onRemoteServer.IsChecked ?? false) ? ipRemoteServer : ipLocalServer;
             int attempts = 0;
             while (!_ClientSocket.Connected)
             {
                 try
                 {
                     attempts++;
-                    _ClientSocket.Connect(IPAddress.Loopback, this.port);
+                    _ClientSocket.Connect(ip, this.port);
                 }
                 catch (SocketException)
                 {
@@ -60,6 +69,8 @@ namespace p4_client
             this.grid = new CustomGrid(this);
             this.username.IsEnabled = false;
             SearchButtons.Visibility = Visibility.Collapsed;
+            onRemoteServer.Visibility = Visibility.Collapsed;
+            pseudoLabel.Content = "Votre nom d'utilisateur";
             LoopConnect();
 
             listening_thread = new Thread(Receive);
@@ -118,16 +129,18 @@ namespace p4_client
             } 
             else if (actions[0] == "move")
             {
-                Piece.NewPieceReceived(this, Int32.Parse(actions[1]));
+                Piece.NewPieceReceived(this, Int32.Parse(actions[1]), fileName);
             }
             else if (actions[0] == "endGame")
             {
                 if (actions[1] == "victory") game!.Victory();
+                if (actions[1] == "disconnected") game!.Victory(true);
                 if (actions[1] == "draw") game!.Draw();
+                Utilitaires.OpenFile(fileName);
             }
             else if (actions[0] == "message")
             {
-                AddMessageToClient(actions[1], true);
+                AddMessageToClient(actions[1], true, !isPlayer1);
             }
             else 
             {
@@ -139,19 +152,15 @@ namespace p4_client
         private void BtnNewPiece(object sender, RoutedEventArgs e)
         {
             int col = int.Parse((sender as Button)!.Tag.ToString()!);
-            Piece.NewPiecePlayed(this, col);
+            Piece.NewPiecePlayed(this, col, fileName, false);
         }
-        
+
         /// <summary>Create a new game with a remote player</summary>
         private void NewGame_Click(object sender, RoutedEventArgs e)
         {
-            info.Content = "Recherche d'une partie...";
-            info.FontSize = 22;
-
-            NewGame.Visibility = Visibility.Collapsed;
-            LeaveGame.Visibility = Visibility.Collapsed;
-
-            Utilitaires.ClearGrid(grille);
+            Utilitaires.ClearWindowUI(this);
+            StartPage.Visibility = Visibility.Visible;
+            info.FontSize = 16;
 
             Send("newGame," + player_uid);
         }
@@ -201,7 +210,7 @@ namespace p4_client
             if (MessageClient.Text != "")
             {
                 Send("message," + this.game!.Id + "," + this.player_uid + "," + MessageClient.Text);
-                AddMessageToClient("Vous: " + MessageClient.Text, true, true);
+                AddMessageToClient("Vous: " + MessageClient.Text, true, isPlayer1);
                 MessageClient.Text = "";
             }
         }
@@ -212,7 +221,7 @@ namespace p4_client
             if (e.Key == Key.Enter && MessageClient.Text != "")
             {
                 Send("message," + this.game!.Id + "," + this.player_uid + "," + MessageClient.Text);
-                AddMessageToClient("Vous: " + MessageClient.Text, true, true);
+                AddMessageToClient("Vous: " + MessageClient.Text, true, isPlayer1);
                 MessageClient.Text = "";
             }
         }
@@ -244,6 +253,8 @@ namespace p4_client
         {
             this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
             this.isPlayer1 = (this.player_uid == this.game!.Player1.Id);
+            this.fileName = AppDomain.CurrentDomain.BaseDirectory + "\\save\\" + this.game.Player1.Name + "-" + this.game.Player2.Name + ".txt"; //path du fichier de sauvegarde
+            Utilitaires.CreateFile(fileName, game);
 
             Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
 
@@ -263,5 +274,52 @@ namespace p4_client
             LaunchGameAgainstBot();
         }
 
+        private void Launch_Replay(object sender, RoutedEventArgs e)
+        {
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\save\\";
+            string[] files = Directory.GetFiles(filePath);
+            List<string> list = new List<string>(this.allReplayFile.ToList());
+            foreach (string file in files)
+            {
+                list.Add(file);
+            }
+            this.allReplayFile = list.ToArray();
+            Console.WriteLine(this.allReplayFile.Length);
+            ShowAllReplayFile();
+        }
+
+        private void ShowAllReplayFile()
+        {
+            launch.Visibility = Visibility.Collapsed;
+            Utilitaires.PrintGameReplay(this);
+
+        }
+        public async void ReplaySelected(object sender, RoutedEventArgs e)
+        {
+            int[] piece = new int[7];
+            this.isPlayer1 = !this.isPlayer1;
+            this.grid = new CustomGrid(this);
+            fileChoosen = this.allReplayFile[(int)((Button)sender).Tag];
+            string[] allMove = Utilitaires.ReadFile(fileChoosen);
+            Console.WriteLine(fileChoosen);
+            this.game = new Game(
+                "Replay:0", 
+                new Player(allMove[0].Split(":")[1] + ":" + allMove[0].Split(":")[0], Brushes.Red), 
+                new Player(allMove[1].Split(":")[1] + ":" + allMove[1].Split(":")[0], Brushes.Yellow),
+                this);
+            Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
+            this.MessageBox.Visibility = Visibility.Collapsed;
+            this.CurrentPlayer.Content = "Le replay est en cours";
+            foreach (string line in allMove)
+            {
+                string[] info = line.Split(":");
+                Piece.NewPiecePlayed(this, int.Parse(info[2]), "", true);
+                Console.WriteLine(line);
+                await Task.Delay(500 * ( 6 - piece[int.Parse(info[2])]));
+                piece[int.Parse(info[2])]++;
+                this.isPlayer1 = !this.isPlayer1;
+            }
+            this.CurrentPlayer.Content = "Le replay est terminé";
+        }
     }
 }

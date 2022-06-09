@@ -1,5 +1,8 @@
 ﻿using p4_client.Model;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -28,6 +31,14 @@ namespace p4_client.Utils
             }
         }
         /// <summary>
+        /// Remove all messages in the chat
+        /// </summary>
+        /// <param name="messageListView">The chat to clear</param>
+        public static void ClearChat(ListView messageListView)
+        {
+            messageListView.Items.Clear();
+        }
+        /// <summary>
         /// Remove all panels on the grid
         /// </summary>
         /// <param name="app">The Main Window</param>
@@ -35,6 +46,9 @@ namespace p4_client.Utils
         {
             app.StartPage.Visibility = Visibility.Collapsed;
             app.GamePage.Visibility = Visibility.Collapsed;
+            app.Replay.Visibility = Visibility.Collapsed;
+            ClearGrid(app.grille);
+            ClearChat(app.MessageListView);
         }
         /// <summary>
         /// Print informations on the UI when a match has been found
@@ -44,7 +58,9 @@ namespace p4_client.Utils
         {
             ClearWindowUI(app);
             app.GamePage.Visibility = Visibility.Visible;
-            app.MessageListView.Items.Clear();
+            app.NewGame.Visibility = Visibility.Collapsed;
+            app.LeaveGame.Visibility = Visibility.Collapsed;
+            app.NewGameAgainstBot.Visibility = Visibility.Collapsed;
 
             PrintMessageToClient(app, "Une partie a été trouvée!");
             PrintMessageToClient(app, app.game!.Player1.Name + " VS " + app.game!.Player2.Name);
@@ -52,6 +68,43 @@ namespace p4_client.Utils
             app.playerTwo.Content = (app.player_uid == app.game!.Player2.Id) ? app.game!.Player2.Name + "\n(vous)" : app.game!.Player2.Name;
             app.CurrentPlayer.Content = app.game.Player1.Name + " commence la partie.";
         }
+        /// <summary>
+        /// Print informations on the UI when a match has been found
+        /// </summary>
+        /// <param name="app">The Main Window</param>
+        public static void PrintGameReplay(MainWindow app)
+        {
+            ClearWindowUI(app);
+            //app.GamePage.Visibility = Visibility.Visible;
+            app.Replay.Visibility = Visibility.Visible;
+            app.NewGame.Visibility = Visibility.Collapsed;
+            app.LeaveGame.Visibility = Visibility.Collapsed;
+            app.NewGameAgainstBot.Visibility = Visibility.Collapsed;
+            Console.WriteLine(app.allReplayFile.Length);
+            if (app.allReplayFile.Length > 0)
+            {
+                int i = 0;
+                foreach (string s in app.allReplayFile)
+                {
+                    int pos = s.LastIndexOf("\\") + 1;
+                    string fileName = s.Substring(pos, s.Length - pos);
+                    app.infos.RowDefinitions.Add(new RowDefinition());
+                    Button name = new Button
+                    {
+                        Content = fileName,
+                        Tag = i,
+                        Margin = new Thickness(3),
+                    };
+                    name.Click += app.ReplaySelected;
+                    app.infos.Children.Add(name);
+                    Grid.SetRow(name, app.infos.RowDefinitions.Count - 1);
+                    Grid.SetColumn(name, 1);
+                    Console.WriteLine("nom écrit");
+                    i++;
+                }
+            }
+        }
+
         /// <summary>
         /// Print a message in the Message ListView on the UI. Can be a message from one player to the other, or a generated message.
         /// </summary>
@@ -78,6 +131,59 @@ namespace p4_client.Utils
             app.MessageListView.Items.Add(new ListViewItem());
             app.MessageListView.SelectedIndex = app.MessageListView.Items.Count - 1;
             app.MessageListView.ScrollIntoView(app.MessageListView.SelectedItem);
+        }
+
+        public static void CreateFile(string filePath, Game game)
+        {
+            string test = filePath.Remove(filePath.LastIndexOf("\\"));
+            if (!Directory.Exists(test))
+            {
+                Directory.CreateDirectory(test);
+            }
+            //Création de fichier si aucun créer
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.CreateText(filePath);
+
+
+        }
+
+        /// <summary>
+        ///message == id du joueur : nom du joueur : colone jouée
+        /// </summary>
+        public static void WriteInFile(string filePath, string message, Game game)
+        {
+            if (!File.Exists(filePath)) CreateFile(filePath, game);
+            //Écriture a la suite dans le fichier
+            using (StreamWriter sw = File.AppendText(filePath))
+            {
+                //id:nom:colonne
+                sw.WriteLine(message);
+            }
+        }
+
+        public static string[] ReadFile(string filePath)
+        {
+            if (!File.Exists(filePath)) return new string[0];
+            string[] lines = File.ReadAllLines(filePath);
+            return lines;
+        }
+
+        public static void OpenFile(string filePath)
+        {
+            string fileName = filePath.Split('\\')[filePath.Count(f => f == '\\')];
+            try
+            {
+                // The following call to Start succeeds if test.txt exists.
+                Console.WriteLine("\nTrying to launch '" + filePath + "'...");
+                Process.Start("notepad.exe", filePath);
+            }
+            catch (Win32Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

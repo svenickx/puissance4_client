@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="p4_client.Model.Player">
+    <Position X="3.25" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Model\Player.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="p4_client.Model.Game">
+    <Position X="0.75" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACQAAAAAAAAgAAwAAEAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Game.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="p4_client.Model.CustomGrid">
+    <Position X="5.5" Y="3" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEIAAAAAACAABAAkAAAAQIAAAAAAIAACAAAAAAA=</HashCode>
+      <FileName>Model\CustomGrid.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Windows.Controls.Grid" Collapsed="true">
+    <Position X="6.25" Y="2" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
