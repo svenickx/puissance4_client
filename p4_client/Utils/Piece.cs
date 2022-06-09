@@ -108,8 +108,9 @@ namespace p4_client.Utils
         /// <param name="app">The Main Window</param>
         public static async void BotPiece(MainWindow app, string fileName)
         {
-            int colToPlay;
-            colToPlay = CheckPlayPossibilities(app.grille);
+            int colToPlay = GetLineWhereBotWin(app);
+            if (colToPlay == -1) colToPlay = GetColumnWhereBotWin(app);
+            if (colToPlay == -1) colToPlay = CheckPlayPossibilities(app.grille);
             Console.WriteLine("Meilleur action: " + colToPlay + "\n");
 
             if (colToPlay == -1)
@@ -191,6 +192,94 @@ namespace p4_client.Utils
                 nextAvailable = lastElement!.Fill.Equals(Brushes.White);
             }
             return nextAvailable;
+        }
+
+        private static int GetLineWhereBotWin(MainWindow app) {
+        List<Rectangle> rects = new();
+
+            for (int row = 1; row < 7; row++) {
+                for (int col = 0; col < 4; col++) {
+                    List<Rectangle> rect = new();
+                    List<int> cols = new();
+                    List<bool> isSameColors = new();
+
+                    for (int i = 0; i < 4; i++) {
+                        var element = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col + i);
+                        rect.Add(element!);
+                        cols.Add(col + i);
+                    }
+
+                    for (int j = 0; j < rect.Count; j++) {
+                        if (rect[j].Fill == Brushes.Red) isSameColors.Add(true);
+                        else isSameColors.Add(false);
+                    }
+
+                    var missingElement = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col + isSameColors.IndexOf(false));
+                    if (missingElement!.Fill == Brushes.Yellow) {
+                        isSameColors[0] = false;
+                        isSameColors[1] = false;
+                        isSameColors[2] = false;
+                        isSameColors[3] = false;
+                    }
+
+                    if ((isSameColors[0] && isSameColors[1] && isSameColors[2]) ||
+                            (isSameColors[0] && isSameColors[1] && isSameColors[3]) ||
+                            (isSameColors[0] && isSameColors[2] && isSameColors[3]) ||
+                            (isSameColors[1] && isSameColors[2] && isSameColors[3])) {
+                            return col + isSameColors.IndexOf(false);
+                    }
+
+                    rect.Clear();
+                    cols.Clear();
+                    isSameColors.Clear();
+                }
+            }
+            return -1;
+        }
+
+        private static int GetColumnWhereBotWin(MainWindow app) {
+            List<Rectangle> rects = new();
+
+            for (int col = 0; col < 7; col++) {
+                for (int row = 1; row < 4; row++) {
+                    List<Rectangle> rect = new();
+                    List<int> cols = new();
+                    List<bool> isSameColors = new();
+
+                    for (int i = 0; i < 4; i++) {
+                        var element = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + i && Grid.GetColumn(e) == col);
+                        rect.Add(element!);
+                        cols.Add(col + i);
+                    }
+
+                    for (int j = 0; j < rect.Count; j++) {
+                        if (rect[j].Fill == Brushes.Red) isSameColors.Add(true);
+                        else isSameColors.Add(false);
+                    }
+
+                    var missingElement = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + isSameColors.IndexOf(false) && Grid.GetColumn(e) == col);
+                    if (missingElement!.Fill == Brushes.Yellow) {
+                        isSameColors[0] = false;
+                        isSameColors[1] = false;
+                        isSameColors[2] = false;
+                        isSameColors[3] = false;
+                    }
+
+                    if ((isSameColors[0] && isSameColors[1] && isSameColors[2]) ||
+                            (isSameColors[0] && isSameColors[1] && isSameColors[3]) ||
+                            (isSameColors[0] && isSameColors[2] && isSameColors[3]) ||
+                            (isSameColors[1] && isSameColors[2] && isSameColors[3])) {
+                        Console.WriteLine(isSameColors.IndexOf(false));
+                        Console.WriteLine(row);
+                        return row;
+                    }
+                    
+                    rect.Clear();
+                    cols.Clear();
+                    isSameColors.Clear();
+                }
+            }
+            return -1;
         }
 
 
