@@ -108,9 +108,7 @@ namespace p4_client.Utils
         /// <param name="app">The Main Window</param>
         public static async void BotPiece(MainWindow app, string fileName)
         {
-            int colToPlay = GetLineWhereBotWin(app);
-            if (colToPlay == -1) colToPlay = GetColumnWhereBotWin(app);
-            if (colToPlay == -1) colToPlay = CheckPlayPossibilities(app.grille);
+            int colToPlay = CheckPlayPossibilities(app.grille);
             Console.WriteLine("Meilleur action: " + colToPlay + "\n");
 
             if (colToPlay == -1)
@@ -159,7 +157,6 @@ namespace p4_client.Utils
         /// <returns>true if the bottom piece is free, false if not</returns>
         public static bool NewPiece(int row, int column, bool nextAvailable, bool isPlayer1, Grid grille)
         {
-            Console.WriteLine(column);
             var element = (Rectangle?)grille
                 .Children.Cast<UIElement>()
                 .FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == column);
@@ -193,96 +190,6 @@ namespace p4_client.Utils
             }
             return nextAvailable;
         }
-
-        private static int GetLineWhereBotWin(MainWindow app) {
-        List<Rectangle> rects = new();
-
-            for (int row = 1; row < 7; row++) {
-                for (int col = 0; col < 4; col++) {
-                    List<Rectangle> rect = new();
-                    List<int> cols = new();
-                    List<bool> isSameColors = new();
-
-                    for (int i = 0; i < 4; i++) {
-                        var element = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col + i);
-                        rect.Add(element!);
-                        cols.Add(col + i);
-                    }
-
-                    for (int j = 0; j < rect.Count; j++) {
-                        if (rect[j].Fill == Brushes.Red) isSameColors.Add(true);
-                        else isSameColors.Add(false);
-                    }
-
-                    var missingElement = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row && Grid.GetColumn(e) == col + isSameColors.IndexOf(false));
-                    if (missingElement!.Fill == Brushes.Yellow) {
-                        isSameColors[0] = false;
-                        isSameColors[1] = false;
-                        isSameColors[2] = false;
-                        isSameColors[3] = false;
-                    }
-
-                    if ((isSameColors[0] && isSameColors[1] && isSameColors[2]) ||
-                            (isSameColors[0] && isSameColors[1] && isSameColors[3]) ||
-                            (isSameColors[0] && isSameColors[2] && isSameColors[3]) ||
-                            (isSameColors[1] && isSameColors[2] && isSameColors[3])) {
-                            return col + isSameColors.IndexOf(false);
-                    }
-
-                    rect.Clear();
-                    cols.Clear();
-                    isSameColors.Clear();
-                }
-            }
-            return -1;
-        }
-
-        private static int GetColumnWhereBotWin(MainWindow app) {
-            List<Rectangle> rects = new();
-
-            for (int col = 0; col < 7; col++) {
-                for (int row = 1; row < 4; row++) {
-                    List<Rectangle> rect = new();
-                    List<int> cols = new();
-                    List<bool> isSameColors = new();
-
-                    for (int i = 0; i < 4; i++) {
-                        var element = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + i && Grid.GetColumn(e) == col);
-                        rect.Add(element!);
-                        cols.Add(col + i);
-                    }
-
-                    for (int j = 0; j < rect.Count; j++) {
-                        if (rect[j].Fill == Brushes.Red) isSameColors.Add(true);
-                        else isSameColors.Add(false);
-                    }
-
-                    var missingElement = (Rectangle?)app.grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + isSameColors.IndexOf(false) && Grid.GetColumn(e) == col);
-                    if (missingElement!.Fill == Brushes.Yellow) {
-                        isSameColors[0] = false;
-                        isSameColors[1] = false;
-                        isSameColors[2] = false;
-                        isSameColors[3] = false;
-                    }
-
-                    if ((isSameColors[0] && isSameColors[1] && isSameColors[2]) ||
-                            (isSameColors[0] && isSameColors[1] && isSameColors[3]) ||
-                            (isSameColors[0] && isSameColors[2] && isSameColors[3]) ||
-                            (isSameColors[1] && isSameColors[2] && isSameColors[3])) {
-                        Console.WriteLine(isSameColors.IndexOf(false));
-                        Console.WriteLine(row);
-                        return row;
-                    }
-                    
-                    rect.Clear();
-                    cols.Clear();
-                    isSameColors.Clear();
-                }
-            }
-            return -1;
-        }
-
-
         private static int CheckPlayPossibilities(Grid grille)
         {
             Dictionary<int, int> allPriorities;
@@ -337,13 +244,14 @@ namespace p4_client.Utils
                 }
             }
 
-
+            Console.WriteLine("perdante: " + priorities[2]);
+            Console.WriteLine("presque  rouge: " + priorities[3]);
+            Console.WriteLine("presque jaune: " + priorities[4]);
             if (priorities[2] != -1) return priorities[2];
             if (priorities[3] != -1) return priorities[3];
             if (priorities[4] != -1) return priorities[4];
             return -1;
         }
-
         private static Dictionary<int, int> CheckBottomRightDiagonals(Grid grille, int row, int col)
         {
             Dictionary<int, int> priorities = new();
@@ -360,11 +268,20 @@ namespace p4_client.Utils
             if (priorities[1] != -1) priorities[1] = col;
             if (priorities[2] != -1) priorities[2] = col;
 
+            // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
+            if (row < 6 && priorities[1] != -1) {
+                var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[1]);
+                if (elementBellow!.Fill == Brushes.White) priorities[1] = -1;
+            }
 
+            // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
+            if (row < 6 && priorities[2] != -1) {
+                var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[2]);
+                if (elementBellow!.Fill == Brushes.White) priorities[2] = -1;
+            }
 
             return priorities;
         }
-
         private static Dictionary<int, int> CheckBottomLeftDiagonals(Grid grille, int row, int col)
         {
             Dictionary<int, int> priorities = new();
@@ -381,9 +298,20 @@ namespace p4_client.Utils
             if (priorities[1] != -1) priorities[1] += col;
             if (priorities[2] != -1) priorities[2] += col;
 
+            // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
+            if (row < 6 && priorities[1] != -1) {
+                var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[1]);
+                if (elementBellow!.Fill == Brushes.White) priorities[1] = -1;
+            }
+
+            // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
+            if (row < 6 && priorities[2] != -1) {
+                var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[2]);
+                if (elementBellow!.Fill == Brushes.White) priorities[2] = -1;
+            }
+
             return priorities;
         }
-
         private static Dictionary<int, int> CheckColumns(Grid grille, int row, int col)
         {
             Dictionary<int, int> priorities = new();
@@ -436,6 +364,19 @@ namespace p4_client.Utils
                 if (elementBellow!.Fill == Brushes.White) priorities[2] = -1;
             }
 
+            // Vérifie si la ligne perdante possède une pièce en dessous du rectangle vide
+            if (row < 6 && priorities[3] != -1) {
+                var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[3]);
+                if (elementBellow!.Fill == Brushes.White) priorities[3] = -1;
+            }
+
+            // Vérifie si la ligne perdante possède une pièce en dessous du rectangle vide
+            if (row < 6 && priorities[4] != -1) {
+                var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[4]);
+                if (elementBellow!.Fill == Brushes.White) priorities[4] = -1;
+            }
+
+            Console.WriteLine("test " + priorities[2]);
             return priorities;
         }
         private static Dictionary<int, int> CheckListOfRectangles(List<Rectangle> rects)
