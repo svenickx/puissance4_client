@@ -119,6 +119,10 @@ namespace p4_client.Utils
             {
                 Random rnd = new();
                 colToPlay = rnd.Next(0, 7);
+                while (playedPieceBot[colToPlay] > 6)
+                {
+                    colToPlay = rnd.Next(0, 7);
+                }
             }
             if (app.isPlayer1)
             {
@@ -131,11 +135,7 @@ namespace p4_client.Utils
 
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + colToPlay.ToString());
             playedPieceBot[colToPlay]++;
-
-            foreach (int piece in playedPieceBot)
-            {
-                Console.WriteLine(piece);
-            }
+            
             for (int row = 1; row <= 6; row++)
             {
                 bool nextAvailable = false;
