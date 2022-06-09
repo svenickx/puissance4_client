@@ -81,24 +81,31 @@ namespace p4_client.Utils
             app.LeaveGame.Visibility = Visibility.Collapsed;
             app.NewGameAgainstBot.Visibility = Visibility.Collapsed;
             Console.WriteLine(app.allReplayFile.Length);
+            app.ReplayListView.Items.Clear();
             if (app.allReplayFile.Length > 0)
             {
                 int i = 0;
                 foreach (string s in app.allReplayFile)
                 {
+                    app.ReplayListView.SelectedIndex = app.ReplayListView.Items.Count - 1;
+                    app.ReplayListView.Items.Remove(app.ReplayListView.SelectedIndex);
                     int pos = s.LastIndexOf("\\") + 1;
                     string fileName = s.Substring(pos, s.Length - pos);
-                    app.infos.RowDefinitions.Add(new RowDefinition());
-                    Button name = new Button
+                    ListViewItem listViewItem = new();
+                    Button button = new Button
                     {
                         Content = fileName,
                         Tag = i,
                         Margin = new Thickness(3),
                     };
-                    name.Click += app.ReplaySelected;
-                    app.infos.Children.Add(name);
-                    Grid.SetRow(name, app.infos.RowDefinitions.Count - 1);
-                    Grid.SetColumn(name, 1);
+                    button.Click += app.ReplaySelected;
+                    listViewItem.Content = button;
+                    listViewItem.HorizontalAlignment = HorizontalAlignment.Center;
+                    app.ReplayListView.Items.Add(listViewItem);
+                    app.ReplayListView.Items.Add(new ListViewItem());
+
+                    app.ReplayListView.SelectedIndex = app.ReplayListView.Items.Count - 1;
+                    app.ReplayListView.ScrollIntoView(app.ReplayListView.SelectedItem);
                     Console.WriteLine("nom écrit");
                     i++;
                 }

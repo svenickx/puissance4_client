@@ -8,7 +8,7 @@
         Title="Puissance 4" Height="900" Width="1462">
 
     <Grid >
-        <StackPanel x:Name="StartPage" Margin="313,217,313,256">
+        <StackPanel x:Name="StartPage" Margin="313,217,313,256" Visibility="Visible">
             <Label x:Name="title" Content="Puissance 4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="72" Margin="0,0,0,55" FontFamily="Segoe Print" />
             <Label x:Name="pseudoLabel" Content="Entrez un nom d'utilisateur" Width="153"/>
             <TextBox x:Name="username" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center" Margin="0,0,0,0"/>
@@ -192,12 +192,19 @@
             </Grid>
         </StackPanel>
         <StackPanel x:Name="Replay" Visibility="Collapsed">
-            <Grid x:Name="infos" Margin="10, 10, 10, 10">
+            <ListView x:Name="ReplayListView" VerticalContentAlignment="Top"  
+                                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                ScrollViewer.CanContentScroll="true"
+                                Height="500" Margin="50, 100, 50, 0">
+            </ListView>
+            <Grid Margin="50, 100, 50, 0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="name"></ColumnDefinition>
-                    <ColumnDefinition x:Name="nbr"></ColumnDefinition>
-                    <ColumnDefinition x:Name="a"></ColumnDefinition>
+                    <ColumnDefinition Width="1.*"></ColumnDefinition>
+                    <ColumnDefinition Width="1.*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Height="50" Content="Retourner au menu principale" Click="MainMenu" Margin="100, 10, 100, 10"></Button>
+                <Button Grid.Column="1" Height="50" Content="Supprimer les Replays" Click="DeleteAllReplays" Margin="100, 10, 100, 10"></Button>
             </Grid>
         </StackPanel>
         <Label Content="Réalisé par:&#xD;&#xA;DOCKX Sven&#xD;&#xA;Velleine Alexis" HorizontalAlignment="Left" Margin="1340,783,0,0" VerticalAlignment="Top"/>
