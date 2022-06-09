@@ -133,29 +133,31 @@ namespace p4_client.Utils
             app.MessageListView.ScrollIntoView(app.MessageListView.SelectedItem);
         }
 
-        public static void CreateFile(string filePath, Game game)
+        public static void CreateFile(string filePath, Game game, bool isNotLan)
         {
-            string test = filePath.Remove(filePath.LastIndexOf("\\"));
-            if (!Directory.Exists(test))
+            if (isNotLan)
             {
-                Directory.CreateDirectory(test);
+                string test = filePath.Remove(filePath.LastIndexOf("\\"));
+                if (!Directory.Exists(test))
+                {
+                    Directory.CreateDirectory(test);
+                }
+                //Création de fichier si aucun créer
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+                File.CreateText(filePath);
             }
-            //Création de fichier si aucun créer
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.CreateText(filePath);
-
 
         }
 
         /// <summary>
         ///message == id du joueur : nom du joueur : colone jouée
         /// </summary>
-        public static void WriteInFile(string filePath, string message, Game game)
+        public static void WriteInFile(string filePath, string message, Game game, bool isNotLan)
         {
-            if (!File.Exists(filePath)) CreateFile(filePath, game);
+            if (!File.Exists(filePath)) CreateFile(filePath, game, isNotLan);
             //Écriture a la suite dans le fichier
             using (StreamWriter sw = File.AppendText(filePath))
             {
@@ -164,14 +166,14 @@ namespace p4_client.Utils
             }
         }
 
-        public static string[] ReadFile(string filePath)
+        public static string[] ReadFile(string filePath, bool isNotLan)
         {
             if (!File.Exists(filePath)) return new string[0];
             string[] lines = File.ReadAllLines(filePath);
             return lines;
         }
 
-        public static void OpenFile(string filePath)
+        public static void OpenFile(string filePath, bool isNotLan)
         {
             string fileName = filePath.Split('\\')[filePath.Count(f => f == '\\')];
             try
