@@ -278,6 +278,7 @@ namespace p4_client
 
         private void Launch_Replay(object sender, RoutedEventArgs e)
         {
+            this.allReplayFile = Array.Empty<string>();
             string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\save\\";
             string[] files = Directory.GetFiles(filePath);
             List<string> list = new List<string>(this.allReplayFile.ToList());
@@ -322,6 +323,24 @@ namespace p4_client
                 this.isPlayer1 = !this.isPlayer1;
             }
             this.CurrentPlayer.Content = "Le replay est terminé";
+        }
+
+        private void MainMenu(object sender, RoutedEventArgs e)
+        {
+            Utilitaires.ClearWindowUI(this);
+            this.StartPage.Visibility = Visibility.Visible;
+            this.launch.Visibility = Visibility.Visible;
+        }
+
+        private void DeleteAllReplays(object sender, RoutedEventArgs e)
+        {
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\save\\";
+            string[] files = Directory.GetFiles(filePath);
+            foreach (string file in files)
+            {
+                if (File.Exists(file)) File.Delete(file);
+            }
+            MainMenu(sender, e);
         }
     }
 }
