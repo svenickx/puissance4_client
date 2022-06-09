@@ -80,7 +80,7 @@ namespace p4_client.Utils
             app.NewGame.Visibility = Visibility.Collapsed;
             app.LeaveGame.Visibility = Visibility.Collapsed;
             app.NewGameAgainstBot.Visibility = Visibility.Collapsed;
-            Console.WriteLine(app.allReplayFile.Length);
+            //Console.WriteteLine(app.allReplayFile.Length);
             app.ReplayListView.Items.Clear();
             if (app.allReplayFile.Length > 0)
             {
@@ -106,7 +106,7 @@ namespace p4_client.Utils
 
                     app.ReplayListView.SelectedIndex = app.ReplayListView.Items.Count - 1;
                     app.ReplayListView.ScrollIntoView(app.ReplayListView.SelectedItem);
-                    Console.WriteLine("nom écrit");
+                    //Console.WriteteLine("nom écrit");
                     i++;
                 }
             }
@@ -195,12 +195,12 @@ namespace p4_client.Utils
                 try
                 {
                     // The following call to Start succeeds if test.txt exists.
-                    Console.WriteLine("\nTrying to launch '" + filePath + "'...");
+                    //Console.WriteteLine("\nTrying to launch '" + filePath + "'...");
                     Process.Start("notepad.exe", filePath);
                 }
                 catch (Win32Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    //Console.WriteteLine(ex.Message);
                 }
             }
         }

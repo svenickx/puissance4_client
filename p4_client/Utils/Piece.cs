@@ -45,7 +45,7 @@ namespace p4_client.Utils
             playedPieceBot[column]++;
             foreach (int piece in playedPieceBot)
             {
-                Console.WriteLine(piece);
+                //Console.WriteLine(piece);
             }
             for (int row = 1; row <= 6; row++)
             {
@@ -113,7 +113,7 @@ namespace p4_client.Utils
         public static async void BotPiece(MainWindow app, string fileName)
         {
             int colToPlay = CheckPlayPossibilities(app.grille);
-            Console.WriteLine("Meilleur action: " + colToPlay + "\n");
+            //Console.WriteLine("Meilleur action: " + colToPlay + "\n");
 
             if (colToPlay == -1)
             {
@@ -255,9 +255,9 @@ namespace p4_client.Utils
                 }
             }
 
-            Console.WriteLine("perdante: " + priorities[2]);
-            Console.WriteLine("presque  rouge: " + priorities[3]);
-            Console.WriteLine("presque jaune: " + priorities[4]);
+            //Console.WriteLine("perdante: " + priorities[2]);
+            //Console.WriteLine("presque  rouge: " + priorities[3]);
+            //Console.WriteLine("presque jaune: " + priorities[4]);
             if (priorities[2] != -1) return priorities[2];
             if (priorities[3] != -1) return priorities[3];
             if (priorities[4] != -1) return priorities[4];
@@ -387,7 +387,7 @@ namespace p4_client.Utils
                 if (elementBellow!.Fill == Brushes.White) priorities[4] = -1;
             }
 
-            Console.WriteLine("test " + priorities[2]);
+            //Console.WriteLine("test " + priorities[2]);
             return priorities;
         }
         private static Dictionary<int, int> CheckListOfRectangles(List<Rectangle> rects)

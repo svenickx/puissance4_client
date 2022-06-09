@@ -57,12 +57,12 @@ namespace p4_client
                 }
                 catch (SocketException)
                 {
-                    Console.Clear();
-                    Console.WriteLine("Connection attempts: " + attempts.ToString());
+                    //Console.Write.Clear();
+                    //Console.Write.WriteLine("Connection attempts: " + attempts.ToString());
                 }
             }
-            Console.Clear();
-            Console.WriteLine("Connected");
+            //Console.Write.Clear();
+            //Console.Write.WriteLine("Connected");
         }
 
         /// <summary>Create a game with a remote player</summary>
@@ -104,12 +104,12 @@ namespace p4_client
                     int rec = _ClientSocket.Receive(receiveBuf);
                     byte[] data = new byte[rec];
                     Array.Copy(receiveBuf, data, rec);
-                    Console.WriteLine("Received: " + Encoding.ASCII.GetString(data));
+                    //Console.Write.WriteLine("Received: " + Encoding.ASCII.GetString(data));
                     SelectActions(Encoding.ASCII.GetString(data));
                 } 
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    //Console.Write.WriteLine(e.ToString());
                 }
             }   
         }
@@ -146,7 +146,7 @@ namespace p4_client
             }
             else 
             {
-                Console.WriteLine(res);
+                //Console.Write.WriteLine(res);
             }
         }
         
@@ -287,7 +287,7 @@ namespace p4_client
                 list.Add(file);
             }
             this.allReplayFile = list.ToArray();
-            Console.WriteLine(this.allReplayFile.Length);
+            //Console.Write.WriteLine(this.allReplayFile.Length);
             ShowAllReplayFile();
         }
 
@@ -304,7 +304,7 @@ namespace p4_client
             this.grid = new CustomGrid(this);
             fileChoosen = this.allReplayFile[(int)((Button)sender).Tag];
             string[] allMove = Utilitaires.ReadFile(fileChoosen, isNotLan);
-            Console.WriteLine(fileChoosen);
+            //Console.Write.WriteLine(fileChoosen);
             this.game = new Game(
                 "Replay:0", 
                 new Player(allMove[0].Split(":")[1] + ":" + allMove[0].Split(":")[0], Brushes.Red), 
@@ -317,7 +317,7 @@ namespace p4_client
             {
                 string[] info = line.Split(":");
                 Piece.NewPiecePlayed(this, int.Parse(info[2]), "", true);
-                Console.WriteLine(line);
+                //Console.Write.WriteLine(line);
                 await Task.Delay(500 * ( 6 - piece[int.Parse(info[2])]));
                 piece[int.Parse(info[2])]++;
                 this.isPlayer1 = !this.isPlayer1;
