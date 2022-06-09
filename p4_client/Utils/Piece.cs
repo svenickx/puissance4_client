@@ -31,11 +31,11 @@ namespace p4_client.Utils
 
                 if (app.isPlayer1)
                 {
-                    Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
+                    Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game, app.isNotLan);
                 }
                 else
                 {
-                    Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game);
+                    Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game, app.isNotLan);
 
                 }
 
@@ -72,11 +72,11 @@ namespace p4_client.Utils
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + column.ToString());
             if (app.isPlayer1)
             {
-                Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game);
+                Utilitaires.WriteInFile(fileName, app.game!.Player2.Id + ":" + app.game.Player2.Name + ":" + column.ToString(), app.game, app.isNotLan);
             }
             else
             {
-                Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game);
+                Utilitaires.WriteInFile(fileName, app.game!.Player1.Id + ":" + app.game.Player1.Name + ":" + column.ToString(), app.game, app.isNotLan);
             }
 
             for (int row = 1; row <= 6; row++)
@@ -120,11 +120,11 @@ namespace p4_client.Utils
             }
             if (app.isPlayer1)
             {
-                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game);
+                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game, app.isNotLan);
             }
             else
             {
-                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game);
+                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game, app.isNotLan);
             }
 
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + colToPlay.ToString());

@@ -27,6 +27,7 @@ namespace p4_client
         public CustomGrid? grid;
         public bool isPlayer1 = false;
         public bool isPlayingAgainstBot = false;
+        public bool isNotLan = true;
         public string? fileName;
         public string[] allReplayFile = Array.Empty<string>();
         private string? fileChoosen;
@@ -136,7 +137,7 @@ namespace p4_client
                 if (actions[1] == "victory") game!.Victory();
                 if (actions[1] == "disconnected") game!.Victory(true);
                 if (actions[1] == "draw") game!.Draw();
-                Utilitaires.OpenFile(fileName);
+                Utilitaires.OpenFile(fileName, isNotLan);
             }
             else if (actions[0] == "message")
             {
@@ -254,7 +255,7 @@ namespace p4_client
             this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
             this.isPlayer1 = (this.player_uid == this.game!.Player1.Id);
             this.fileName = AppDomain.CurrentDomain.BaseDirectory + "\\save\\" + this.game.Player1.Name + "-" + this.game.Player2.Name + ".txt"; //path du fichier de sauvegarde
-            Utilitaires.CreateFile(fileName, game);
+            if(isNotLan) Utilitaires.CreateFile(fileName, game, isNotLan);
 
             Dispatcher.Invoke(() => { Utilitaires.PrintGameFound(this); });
 
@@ -300,7 +301,7 @@ namespace p4_client
             this.isPlayer1 = !this.isPlayer1;
             this.grid = new CustomGrid(this);
             fileChoosen = this.allReplayFile[(int)((Button)sender).Tag];
-            string[] allMove = Utilitaires.ReadFile(fileChoosen);
+            string[] allMove = Utilitaires.ReadFile(fileChoosen, isNotLan);
             Console.WriteLine(fileChoosen);
             this.game = new Game(
                 "Replay:0", 
