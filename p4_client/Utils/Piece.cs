@@ -13,7 +13,7 @@ namespace p4_client.Utils
 {
     class Piece
     {
-
+        private static int[] playedPieceBot = new int[7];
         /// <summary>
         /// Actions performed when the current Client played.
         /// </summary>
@@ -42,7 +42,11 @@ namespace p4_client.Utils
                 app.CurrentPlayer.Content = "A votre adversaire de jouer!";
 
             }
-            
+            playedPieceBot[column]++;
+            foreach (int piece in playedPieceBot)
+            {
+                Console.WriteLine(piece);
+            }
             for (int row = 1; row <= 6; row++)
             {
                 // Le joueur actuel à placer une pièce
@@ -126,6 +130,12 @@ namespace p4_client.Utils
             }
 
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + colToPlay.ToString());
+            playedPieceBot[colToPlay]++;
+
+            foreach (int piece in playedPieceBot)
+            {
+                Console.WriteLine(piece);
+            }
             for (int row = 1; row <= 6; row++)
             {
                 bool nextAvailable = false;
@@ -206,6 +216,7 @@ namespace p4_client.Utils
             {
                 for (int col = 0; col < 7; col++)
                 {
+                    if (playedPieceBot[col] == 6) break;
                     // verifier la ligne
                     if (col < 4)
                     {
