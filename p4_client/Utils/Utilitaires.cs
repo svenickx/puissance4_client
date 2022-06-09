@@ -157,34 +157,44 @@ namespace p4_client.Utils
         /// </summary>
         public static void WriteInFile(string filePath, string message, Game game, bool isNotLan)
         {
-            if (!File.Exists(filePath)) CreateFile(filePath, game, isNotLan);
-            //Écriture a la suite dans le fichier
-            using (StreamWriter sw = File.AppendText(filePath))
+            if (isNotLan)
             {
-                //id:nom:colonne
-                sw.WriteLine(message);
+                if (!File.Exists(filePath)) CreateFile(filePath, game, isNotLan);
+                //Écriture a la suite dans le fichier
+                using (StreamWriter sw = File.AppendText(filePath))
+                {
+                    //id:nom:colonne
+                    sw.WriteLine(message);
+                }
             }
         }
 
         public static string[] ReadFile(string filePath, bool isNotLan)
         {
-            if (!File.Exists(filePath)) return new string[0];
-            string[] lines = File.ReadAllLines(filePath);
-            return lines;
+            if (isNotLan)
+            {
+                if (!File.Exists(filePath)) return new string[0];
+                string[] lines = File.ReadAllLines(filePath);
+                return lines;
+            }
+            return new string[0];
         }
 
         public static void OpenFile(string filePath, bool isNotLan)
         {
-            string fileName = filePath.Split('\\')[filePath.Count(f => f == '\\')];
-            try
+            if (isNotLan)
             {
-                // The following call to Start succeeds if test.txt exists.
-                Console.WriteLine("\nTrying to launch '" + filePath + "'...");
-                Process.Start("notepad.exe", filePath);
-            }
-            catch (Win32Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                string fileName = filePath.Split('\\')[filePath.Count(f => f == '\\')];
+                try
+                {
+                    // The following call to Start succeeds if test.txt exists.
+                    Console.WriteLine("\nTrying to launch '" + filePath + "'...");
+                    Process.Start("notepad.exe", filePath);
+                }
+                catch (Win32Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
     }
