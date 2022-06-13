@@ -75,11 +75,14 @@ namespace p4_client
             pseudoLabel.Content = "Votre nom d'utilisateur";
             LoopConnect();
 
+            string playerName = username.Text.ToString().Replace(',', '_');
+            playerName = playerName.Replace(':', '_');
+
             listening_thread = new Thread(Receive);
             listening_thread.Start();
 
             this.player_uid = Guid.NewGuid().ToString();
-            Send("search," + username.Text + "," + this.player_uid);
+            Send("search," + playerName + "," + this.player_uid);
         }
         
         /// <summary>Send data to the server</summary>
@@ -242,7 +245,9 @@ namespace p4_client
             this.player_uid = Guid.NewGuid().ToString();
 
             string game_id = "matchFound:" + Guid.NewGuid().ToString();
-            string player1 = username.Text + ":" + this.player_uid;
+            string playerName = username.Text.ToString().Replace(',', '_');
+            playerName = playerName.Replace(':', '_');
+            string player1 = playerName + ":" + this.player_uid;
             string bot = "Bot:" + Guid.NewGuid().ToString();
             this.isPlayingAgainstBot = true;
 

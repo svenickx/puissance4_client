@@ -115,23 +115,12 @@ namespace p4_client.Utils
             int colToPlay = CheckPlayPossibilities(app.grille);
             //Console.WriteLine("Meilleur action: " + colToPlay + "\n");
 
-            if (colToPlay == -1)
-            {
-                Random rnd = new();
-                colToPlay = rnd.Next(0, 7);
-                while (playedPieceBot[colToPlay] > 6)
-                {
-                    colToPlay = rnd.Next(0, 7);
-                }
-            }
-            if (app.isPlayer1)
-            {
-                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game, app.isNotLan);
-            }
-            else
-            {
-                Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game, app.isNotLan);
-            }
+            Random rnd = new();
+            if (colToPlay == -1) colToPlay = rnd.Next(0, 7);
+            while (playedPieceBot[colToPlay] > 6) colToPlay = rnd.Next(0, 7);
+            
+            if (app.isPlayer1) Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game, app.isNotLan);
+            else  Utilitaires.WriteInFile(fileName, "9874563210:Bot:" + colToPlay.ToString(), app.game, app.isNotLan);
 
             app.AddMessageToClient("Votre adversaire a placé une pièce dans la colonne " + colToPlay.ToString());
             playedPieceBot[colToPlay]++;
@@ -315,7 +304,7 @@ namespace p4_client.Utils
                 if (elementBellow!.Fill == Brushes.White) priorities[1] = -1;
             }
 
-            // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
+            // Vérifie si la ligne perdante possède une pièce en dessous du rectangle vide
             if (row < 6 && priorities[2] != -1) {
                 var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[2]);
                 if (elementBellow!.Fill == Brushes.White) priorities[2] = -1;
