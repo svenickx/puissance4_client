@@ -91,6 +91,7 @@ namespace p4_client.Utils
                     app.ReplayListView.Items.Remove(app.ReplayListView.SelectedIndex);
                     int pos = s.LastIndexOf("\\") + 1;
                     string fileName = s.Substring(pos, s.Length - pos);
+                    //string[] test = fileName.Split(new Char[] { '-', '.'});  test[0] + " contre " + test[1]
                     ListViewItem listViewItem = new();
                     Button button = new Button
                     {

@@ -8,11 +8,11 @@
         Title="Puissance 4" Height="900" Width="1462">
 
     <Grid >
-        <StackPanel x:Name="StartPage" Margin="313,217,313,256" Visibility="Visible">
+        <StackPanel x:Name="StartPage" Margin="313,217,313,256" Visibility="visi">
             <Label x:Name="title" Content="Puissance 4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="72" Margin="0,0,0,55" FontFamily="Segoe Print" />
             <Label x:Name="pseudoLabel" Content="Entrez un nom d'utilisateur" Width="153"/>
             <TextBox x:Name="username" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center" Margin="0,0,0,0"/>
-            <CheckBox x:Name="onRemoteServer" Content="Jouer sur le serveur en ligne" Width="173"  Margin="0,20,0,0" Height="22">
+            <CheckBox x:Name="onRemoteServer" Content="Jouer sur un serveur en LAN" Width="173"  Margin="0,20,0,0" Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <CheckBox.LayoutTransform>
                     <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
                 </CheckBox.LayoutTransform>
