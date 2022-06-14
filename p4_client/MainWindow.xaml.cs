@@ -21,7 +21,7 @@ namespace p4_client
     public partial class MainWindow : Window
     {
         private readonly Socket _ClientSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
+        
         public string player_uid = "";
         public Game? game;
         public CustomGrid? grid;
@@ -251,12 +251,12 @@ namespace p4_client
             string bot = "Bot:" + Guid.NewGuid().ToString();
             this.isPlayingAgainstBot = true;
 
-            CreateGame(new string[] { game_id, player1, bot });
+            CreateGame(new string[] { game_id, player1, bot});
         }
         
         /// <summary>Create a model with received informations</summary>
         /// <param name="actions">All informations to create the game</param>
-        private void CreateGame(string[] actions)
+        private async void CreateGame(string[] actions)
         {
             this.game = new Game(actions[0], new Player(actions[1], Brushes.Red), new Player(actions[2], Brushes.Yellow), this);
             this.isPlayer1 = (this.player_uid == this.game!.Player1.Id);

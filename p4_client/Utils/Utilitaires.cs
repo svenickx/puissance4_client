@@ -172,6 +172,7 @@ namespace p4_client.Utils
                 {
                     //id:nom:colonne
                     sw.WriteLine(message);
+                    sw.Close();
                 }
             }
         }
