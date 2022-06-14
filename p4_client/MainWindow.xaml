@@ -8,7 +8,7 @@
         Title="Puissance 4" Height="900" Width="1462">
 
     <Grid >
-        <StackPanel x:Name="StartPage" Margin="313,217,313,256" Visibility="visi">
+        <StackPanel x:Name="StartPage" Margin="313,217,313,256" Visibility="Visible">
             <Label x:Name="title" Content="Puissance 4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="72" Margin="0,0,0,55" FontFamily="Segoe Print" />
             <Label x:Name="pseudoLabel" Content="Entrez un nom d'utilisateur" Width="153"/>
             <TextBox x:Name="username" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Joueur1" VerticalAlignment="Top" Width="208" FontSize="22" TextAlignment="Center" Margin="0,0,0,0"/>
