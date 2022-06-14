@@ -45,7 +45,7 @@ namespace p4_client
         }
         public void LoopConnect()
         {
-            IPAddress ip = (onRemoteServer.IsChecked ?? false) ? ipRemoteServer : ipLocalServer;
+            IPAddress ip = (onRemoteServer.IsChecked ?? false) ? ipLocalServer : ipRemoteServer;
             if (ip == ipLocalServer) isNotLan = false;
             int attempts = 0;
             while (!_ClientSocket.Connected)
