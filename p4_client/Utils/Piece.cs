@@ -270,12 +270,14 @@ namespace p4_client.Utils
 
             // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
             if (row < 6 && priorities[1] != -1) {
+                //Console.WriteLine("diagonale gagnante 1");
                 var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[1]);
                 if (elementBellow!.Fill == Brushes.White) priorities[1] = -1;
             }
 
             // Vérifie si la ligne gagnante possède une pièce en dessous du rectangle vide
             if (row < 6 && priorities[2] != -1) {
+                //Console.WriteLine("diagonale perdante 1");
                 var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[2]);
                 if (elementBellow!.Fill == Brushes.White) priorities[2] = -1;
             }
@@ -373,10 +375,10 @@ namespace p4_client.Utils
             // Vérifie si la ligne perdante possède une pièce en dessous du rectangle vide
             if (row < 6 && priorities[4] != -1) {
                 var elementBellow = (Rectangle?)grille.Children.Cast<UIElement>().FirstOrDefault(e => Grid.GetRow(e) == row + 1 && Grid.GetColumn(e) == priorities[4]);
+                //Console.WriteLine(elementBellow!.Fill.ToString());
                 if (elementBellow!.Fill == Brushes.White) priorities[4] = -1;
             }
 
-            //Console.WriteLine("test " + priorities[2]);
             return priorities;
         }
         private static Dictionary<int, int> CheckListOfRectangles(List<Rectangle> rects)

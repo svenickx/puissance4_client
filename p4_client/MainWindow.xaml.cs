@@ -120,6 +120,7 @@ namespace p4_client
         /// <summary>Performs an action according to the server's data</summary>
         /// <param name="res">The data received from the server</param>
         private void SelectActions(string res) {
+            //Console.WriteLine(res);
             string[] actions = res.Split(',');
 
             if (actions[0] == "waiting") 
@@ -141,7 +142,7 @@ namespace p4_client
                 if (actions[1] == "victory") game!.Victory();
                 if (actions[1] == "disconnected") game!.Victory(true);
                 if (actions[1] == "draw") game!.Draw();
-                Utilitaires.OpenFile(fileName, isNotLan);
+                //Utilitaires.OpenFile(fileName, isNotLan);
             }
             else if (actions[0] == "message")
             {
@@ -250,6 +251,7 @@ namespace p4_client
             string player1 = playerName + ":" + this.player_uid;
             string bot = "Bot:" + Guid.NewGuid().ToString();
             this.isPlayingAgainstBot = true;
+            this.isNotLan = false;
 
             CreateGame(new string[] { game_id, player1, bot});
         }
